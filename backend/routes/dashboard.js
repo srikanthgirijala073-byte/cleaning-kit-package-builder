@@ -15,29 +15,34 @@ router.get('/stats', authenticate, async (req, res) => {
       params.push(req.user.userId);
     }
 
-    const totalOrders = await getOne(`SELECT COUNT(*) as count FROM orders${orderFilter}`, params);
-    const totalRevenue = await getOne(`SELECT COALESCE(SUM(total_amount), 0) as total FROM orders${orderFilter ? orderFilter + " AND status IN ('delivered', 'shipped')" : " WHERE status IN ('delivered', 'shipped')"}`, params);
-    const pendingOrders = await getOne(`SELECT COUNT(*) as count FROM orders${orderFilter ? orderFilter + " AND status = 'placed'" : " WHERE status = 'placed'"}`, params);
-    const processingOrders = await getOne(`SELECT COUNT(*) as count FROM orders${orderFilter ? orderFilter + " AND status = 'processing'" : " WHERE status = 'processing'"}`, params);
+    try {
+      const totalOrders = await getOne(`SELECT COUNT(*) as count FROM orders${orderFilter}`, params);
+      const totalRevenue = await getOne(`SELECT COALESCE(SUM(total_amount), 0) as total FROM orders${orderFilter ? orderFilter + " AND status IN ('delivered', 'shipped')" : " WHERE status IN ('delivered', 'shipped')"}`, params);
+      const pendingOrders = await getOne(`SELECT COUNT(*) as count FROM orders${orderFilter ? orderFilter + " AND status = 'placed'" : " WHERE status = 'placed'"}`, params);
+      const processingOrders = await getOne(`SELECT COUNT(*) as count FROM orders${orderFilter ? orderFilter + " AND status = 'processing'" : " WHERE status = 'processing'"}`, params);
+      const totalCustomers = await getOne('SELECT COUNT(*) as count FROM customers');
+      const totalProducts = await getOne('SELECT COUNT(*) as count FROM products WHERE is_active = true');
+      const lowStockProducts = await getOne("SELECT COUNT(*) as count FROM inventory WHERE status IN ('Low Stock', 'Out of Stock')");
 
-    const totalCustomers = await getOne('SELECT COUNT(*) as count FROM customers');
-    const totalProducts = await getOne('SELECT COUNT(*) as count FROM products WHERE is_active = true');
-    const lowStockProducts = await getOne("SELECT COUNT(*) as count FROM inventory WHERE status IN ('Low Stock', 'Out of Stock')");
-
-    res.json({
-      totalOrders: totalOrders ? totalOrders.count : 0,
-      totalRevenue: totalRevenue ? parseFloat(totalRevenue.total) : 0,
-      totalCustomers: totalCustomers ? totalCustomers.count : 0,
-      totalProducts: totalProducts ? totalProducts.count : 0,
-      pendingOrders: pendingOrders ? pendingOrders.count : 0,
-      processingOrders: processingOrders ? processingOrders.count : 0,
-      lowStockProducts: lowStockProducts ? lowStockProducts.count : 0,
-    });
+      res.json({
+        totalOrders: totalOrders ? totalOrders.count : 0,
+        totalRevenue: totalRevenue ? parseFloat(totalRevenue.total) : 0,
+        totalCustomers: totalCustomers ? totalCustomers.count : 0,
+        totalProducts: totalProducts ? totalProducts.count : 0,
+        pendingOrders: pendingOrders ? pendingOrders.count : 0,
+        processingOrders: processingOrders ? processingOrders.count : 0,
+        lowStockProducts: lowStockProducts ? lowStockProducts.count : 0,
+      });
+    } catch (dbErr) {
+      console.warn('Dashboard stats DB error, returning demo stats:', dbErr.message);
+      res.json({ totalOrders: 0, totalRevenue: 0, totalCustomers: 0, totalProducts: 20, pendingOrders: 0, processingOrders: 0, lowStockProducts: 0, _demo: true });
+    }
   } catch (error) {
     console.error('Dashboard stats error:', error);
     res.status(500).json({ message: 'Failed to load dashboard stats' });
   }
 });
+
 
 // GET /api/dashboard/charts
 router.get('/charts', authenticate, async (req, res) => {

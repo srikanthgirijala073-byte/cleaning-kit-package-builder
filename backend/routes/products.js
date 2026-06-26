@@ -4,6 +4,32 @@ const { query, getOne } = require('../config/db');
 const { authenticate, authorize } = require('../middleware/auth');
 const upload = require('../middleware/upload');
 
+// =======================
+// Demo products — returned when MySQL DB is offline (e.g. Render free tier without DB)
+// =======================
+const DEMO_PRODUCTS = [
+  { product_id: 1,  name: 'Multi-Surface Cleaner',      category: 'Surface Cleaners',   price: 299,  stock: 150, description: 'Powerful cleaner for all surfaces. Safe for kitchen, bathroom, and office use.', image: '', is_active: true, created_at: new Date().toISOString() },
+  { product_id: 2,  name: 'Heavy-Duty Floor Cleaner',   category: 'Floor Care',          price: 450,  stock: 80,  description: 'Industrial-grade floor cleaner ideal for hospitals, hotels, and schools.',      image: '', is_active: true, created_at: new Date().toISOString() },
+  { product_id: 3,  name: 'Toilet Bowl Cleaner',        category: 'Bathroom Care',       price: 180,  stock: 200, description: 'Removes tough stains and kills 99.9% of germs.',                               image: '', is_active: true, created_at: new Date().toISOString() },
+  { product_id: 4,  name: 'Glass & Window Cleaner',     category: 'Glass Care',          price: 220,  stock: 120, description: 'Streak-free formula for crystal-clear windows and mirrors.',                   image: '', is_active: true, created_at: new Date().toISOString() },
+  { product_id: 5,  name: 'Dishwashing Liquid',         category: 'Kitchen Care',        price: 150,  stock: 300, description: 'Gentle on hands, tough on grease. Lemon fragrance.',                          image: '', is_active: true, created_at: new Date().toISOString() },
+  { product_id: 6,  name: 'Microfiber Cleaning Cloth',  category: 'Cleaning Tools',      price: 120,  stock: 500, description: 'Ultra-soft microfiber for dust-free, scratch-free cleaning.',                 image: '', is_active: true, created_at: new Date().toISOString() },
+  { product_id: 7,  name: 'Mop & Bucket Set',           category: 'Mopping Equipment',   price: 850,  stock: 60,  description: 'Heavy-duty mop with spin bucket. Perfect for large floor areas.',             image: '', is_active: true, created_at: new Date().toISOString() },
+  { product_id: 8,  name: 'Disinfectant Spray',         category: 'Disinfectants',       price: 350,  stock: 90,  description: 'Hospital-grade disinfectant spray. Kills bacteria and viruses.',               image: '', is_active: true, created_at: new Date().toISOString() },
+  { product_id: 9,  name: 'Hand Sanitizer (500ml)',     category: 'Hygiene Products',    price: 199,  stock: 400, description: '70% alcohol-based sanitizer. WHO-recommended formula.',                       image: '', is_active: true, created_at: new Date().toISOString() },
+  { product_id: 10, name: 'Air Freshener Spray',        category: 'Air Care',            price: 280,  stock: 180, description: 'Long-lasting fragrance for offices, hotels, and washrooms.',                  image: '', is_active: true, created_at: new Date().toISOString() },
+  { product_id: 11, name: 'Scrub Pad (Pack of 6)',      category: 'Cleaning Tools',      price: 90,   stock: 600, description: 'Non-scratch scrub pads for pots, pans, and surfaces.',                       image: '', is_active: true, created_at: new Date().toISOString() },
+  { product_id: 12, name: 'Broom & Dustpan Set',        category: 'Sweeping Equipment',  price: 320,  stock: 75,  description: 'Ergonomic broom with dustpan for efficient sweeping.',                       image: '', is_active: true, created_at: new Date().toISOString() },
+  { product_id: 13, name: 'Bathroom Tile Cleaner',      category: 'Bathroom Care',       price: 260,  stock: 140, description: 'Removes soap scum, mold, and mildew from tiles and grout.',                  image: '', is_active: true, created_at: new Date().toISOString() },
+  { product_id: 14, name: 'Liquid Hand Wash (1L)',      category: 'Hygiene Products',    price: 175,  stock: 350, description: 'Moisturizing antibacterial hand wash for frequent use.',                     image: '', is_active: true, created_at: new Date().toISOString() },
+  { product_id: 15, name: 'Drain Unclogger Gel',        category: 'Drain Care',          price: 310,  stock: 110, description: 'Fast-acting gel dissolves hair, grease, and soap clogs.',                   image: '', is_active: true, created_at: new Date().toISOString() },
+  { product_id: 16, name: 'Carpet Cleaner Foam',        category: 'Floor Care',          price: 390,  stock: 65,  description: 'Deep-clean carpets and rugs with stain-lifting foam formula.',               image: '', is_active: true, created_at: new Date().toISOString() },
+  { product_id: 17, name: 'Stainless Steel Polish',     category: 'Surface Cleaners',    price: 330,  stock: 95,  description: 'Restores shine to steel appliances, sinks, and fixtures.',                   image: '', is_active: true, created_at: new Date().toISOString() },
+  { product_id: 18, name: 'Garbage Bags (50 pcs)',      category: 'Waste Management',    price: 140,  stock: 800, description: 'Heavy-duty leak-proof garbage bags for office and home use.',                 image: '', is_active: true, created_at: new Date().toISOString() },
+  { product_id: 19, name: 'Rubber Gloves (Pair)',       category: 'Safety Equipment',    price: 85,   stock: 700, description: 'Waterproof household gloves for safe chemical handling.',                    image: '', is_active: true, created_at: new Date().toISOString() },
+  { product_id: 20, name: 'Wet Wipes (Pack of 100)',    category: 'Hygiene Products',    price: 210,  stock: 500, description: 'Antibacterial wipes for surfaces, hands, and equipment.',                    image: '', is_active: true, created_at: new Date().toISOString() },
+];
+
 // GET /api/products
 router.get('/', async (req, res) => {
   try {
@@ -22,26 +48,45 @@ router.get('/', async (req, res) => {
       params.push(category);
     }
 
-    const countResult = await getOne(`SELECT COUNT(*) as total FROM products p ${whereClause}`, params);
-    const total = countResult ? countResult.total : 0;
+    let products, total, categories, inStock, lowStock;
 
-    const products = await query(
-      `SELECT p.* FROM products p ${whereClause} ORDER BY p.created_at DESC LIMIT ? OFFSET ?`,
-      [...params, parseInt(limit), offset]
-    );
+    try {
+      const countResult = await getOne(`SELECT COUNT(*) as total FROM products p ${whereClause}`, params);
+      total = countResult ? countResult.total : 0;
 
-    const categories = await query('SELECT DISTINCT category FROM products WHERE category != \'\' AND is_active = true ORDER BY category');
+      products = await query(
+        `SELECT p.* FROM products p ${whereClause} ORDER BY p.created_at DESC LIMIT ? OFFSET ?`,
+        [...params, parseInt(limit), offset]
+      );
 
-    const inStockResult = await getOne("SELECT COUNT(*) as count FROM products WHERE is_active = true AND stock > 0");
-    const lowStockResult = await getOne("SELECT COUNT(*) as count FROM products WHERE is_active = true AND stock < 10 AND stock >= 0");
+      categories = await query("SELECT DISTINCT category FROM products WHERE category != '' AND is_active = true ORDER BY category");
+      const inStockResult = await getOne("SELECT COUNT(*) as count FROM products WHERE is_active = true AND stock > 0");
+      const lowStockResult = await getOne("SELECT COUNT(*) as count FROM products WHERE is_active = true AND stock < 10 AND stock >= 0");
+      inStock = inStockResult ? inStockResult.count : 0;
+      lowStock = lowStockResult ? lowStockResult.count : 0;
+    } catch (dbErr) {
+      // DB not available — use demo products fallback
+      console.warn('Products DB error, using demo data:', dbErr.message);
+      let filtered = DEMO_PRODUCTS;
+      if (search) filtered = filtered.filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
+      if (category) filtered = filtered.filter(p => p.category === category);
+      total = filtered.length;
+      products = filtered.slice(offset, offset + parseInt(limit));
+      const allCats = [...new Set(DEMO_PRODUCTS.map(p => p.category))];
+      categories = allCats.map(c => ({ category: c }));
+      inStock = DEMO_PRODUCTS.filter(p => p.stock > 0).length;
+      lowStock = DEMO_PRODUCTS.filter(p => p.stock < 10 && p.stock >= 0).length;
+    }
 
     res.json({
       products,
       total,
-      inStock: inStockResult ? inStockResult.count : 0,
-      lowStock: lowStockResult ? lowStockResult.count : 0,
+      inStock,
+      lowStock,
       totalPages: Math.ceil(total / parseInt(limit)),
-      categories: categories.map(c => c.category),
+      categories: Array.isArray(categories) && categories[0] && typeof categories[0] === 'object' && 'category' in categories[0]
+        ? categories.map(c => c.category)
+        : categories,
     });
   } catch (error) {
     console.error('Get products error:', error);
@@ -49,10 +94,17 @@ router.get('/', async (req, res) => {
   }
 });
 
+
 // GET /api/products/:id
 router.get('/:id', async (req, res) => {
   try {
-    const product = await getOne('SELECT * FROM products WHERE product_id = ?', [req.params.id]);
+    let product;
+    try {
+      product = await getOne('SELECT * FROM products WHERE product_id = ?', [req.params.id]);
+    } catch (dbErr) {
+      console.warn('Get product by ID DB error, using demo data:', dbErr.message);
+      product = DEMO_PRODUCTS.find(p => p.product_id === parseInt(req.params.id)) || null;
+    }
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
