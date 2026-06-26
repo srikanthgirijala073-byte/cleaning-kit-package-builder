@@ -21,6 +21,16 @@ const { authenticate } = require('../middleware/auth');
 const upload = require('../middleware/upload');
 
 // =======================
+// Demo users fallback — used when MySQL DB is offline (e.g. on Render free tier without DB)
+// =======================
+const DEMO_USERS = {
+  'admin@example.com':    { user_id: 1, name: 'Admin User',    email: 'admin@example.com',    role: 'admin',    email_verified: true, is_active: true, password: 'admin123' },
+  'manager@example.com':  { user_id: 2, name: 'Manager User',  email: 'manager@example.com',  role: 'manager',  email_verified: true, is_active: true, password: 'manager123' },
+  'staff@example.com':    { user_id: 3, name: 'Staff User',    email: 'staff@example.com',    role: 'staff',    email_verified: true, is_active: true, password: 'staff123' },
+  'customer@example.com': { user_id: 4, name: 'Customer User', email: 'customer@example.com', role: 'customer', email_verified: true, is_active: true, password: 'customer123' },
+};
+
+// =======================
 // POST /api/auth/register
 // =======================
 router.post('/register', async (req, res) => {
@@ -89,7 +99,25 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ message: 'Email and password are required' });
     }
 
-    const user = await getOne('SELECT * FROM users WHERE email = ?', [email]);
+    let user = null;
+
+    // Try live DB
+    try {
+      user = await getOne('SELECT * FROM users WHERE email = ?', [email]);
+    } catch (dbErr) {
+      console.warn('Login DB error, checking demo users:', dbErr.message);
+      // Check against hardcoded demo users when DB is offline
+      const demoMatch = DEMO_USERS && DEMO_USERS[email];
+      if (demoMatch && demoMatch.password === password) {
+        const accessToken = generateAccessToken(demoMatch);
+        const refreshToken = generateRefreshToken(demoMatch);
+        const { password: _p, ...userData } = demoMatch;
+        return res.json({
+          accessToken, token: accessToken, refreshToken, historyId: null, user: userData, _demo: true,
+        });
+      }
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
 
     if (!user) {
       return res.status(401).json({ message: 'Invalid email or password' });
@@ -190,6 +218,7 @@ router.post('/login', async (req, res) => {
 // =======================
 // POST /api/auth/quick-login (development bypass)
 // =======================
+
 router.post('/quick-login', async (req, res) => {
   try {
     const { email, role, name } = req.body;
@@ -198,44 +227,62 @@ router.post('/quick-login', async (req, res) => {
       return res.status(400).json({ message: 'Email, role, and name are required' });
     }
 
-    // Find or create user
-    let user = await getOne('SELECT * FROM users WHERE email = ?', [email]);
+    let user = null;
 
-    if (!user) {
-      const hashedPassword = await bcrypt.hash('quick123', 10);
-      const result = await query(
-        'INSERT INTO users (name, email, password, role, email_verified, is_active) VALUES (?, ?, ?, ?, true, true)',
-        [name, email, hashedPassword, role]
+    // Try DB first
+    try {
+      user = await getOne('SELECT * FROM users WHERE email = ?', [email]);
+
+      if (!user) {
+        const hashedPassword = await bcrypt.hash('quick123', 10);
+        const result = await query(
+          'INSERT INTO users (name, email, password, role, email_verified, is_active) VALUES (?, ?, ?, ?, true, true)',
+          [name, email, hashedPassword, role]
+        );
+        user = await getOne('SELECT * FROM users WHERE user_id = ?', [result.insertId]);
+      }
+
+      // Generate tokens
+      const accessToken = generateAccessToken(user);
+      const refreshToken = generateRefreshToken(user);
+
+      const refreshExpires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+      await query(
+        'INSERT INTO refresh_tokens (user_id, token, expires_at) VALUES (?, ?, ?)',
+        [user.user_id, refreshToken, refreshExpires]
       );
-      user = await getOne('SELECT * FROM users WHERE user_id = ?', [result.insertId]);
+
+      const loginResult = await query(
+        'INSERT INTO login_history (user_id, ip_address, device_name, browser, is_current_session) VALUES (?, ?, ?, ?, ?)',
+        [user.user_id, req.ip || '127.0.0.1', 'Quick Login', 'Quick Login', true]
+      );
+
+      await query('UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE user_id = ?', [user.user_id]);
+
+      const { password: _, ...userData } = user;
+      return res.json({
+        accessToken,
+        token: accessToken,
+        refreshToken,
+        historyId: loginResult.insertId,
+        user: userData,
+      });
+    } catch (dbError) {
+      // DB not available — use demo user fallback
+      console.warn('Quick-login DB error, using demo fallback:', dbError.message);
+      const demoUser = DEMO_USERS[email] || { user_id: 99, name, email, role, email_verified: true, is_active: true };
+      const accessToken = generateAccessToken(demoUser);
+      const refreshToken = generateRefreshToken(demoUser);
+      const { password: _p, ...userData } = demoUser;
+      return res.json({
+        accessToken,
+        token: accessToken,
+        refreshToken,
+        historyId: null,
+        user: userData,
+        _demo: true,
+      });
     }
-
-    // Generate tokens
-    const accessToken = generateAccessToken(user);
-    const refreshToken = generateRefreshToken(user);
-
-    const refreshExpires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-    await query(
-      'INSERT INTO refresh_tokens (user_id, token, expires_at) VALUES (?, ?, ?)',
-      [user.user_id, refreshToken, refreshExpires]
-    );
-
-    const loginResult = await query(
-      'INSERT INTO login_history (user_id, ip_address, device_name, browser, is_current_session) VALUES (?, ?, ?, ?, ?)',
-      [user.user_id, req.ip || '127.0.0.1', 'Quick Login', 'Quick Login', true]
-    );
-
-    await query('UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE user_id = ?', [user.user_id]);
-
-    const { password: _, ...userData } = user;
-
-    res.json({
-      accessToken,
-      token: accessToken,
-      refreshToken,
-      historyId: loginResult.insertId,
-      user: userData,
-    });
   } catch (error) {
     console.error('Quick login error:', error);
     res.status(500).json({ message: 'Quick login failed' });
