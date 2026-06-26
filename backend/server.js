@@ -78,12 +78,20 @@ const allowedOrigins = [
   'http://127.0.0.1:5173',
   'http://127.0.0.1:5174',
   process.env.FRONTEND_URL,
+  // Vercel deployment URLs
+  'https://cleaning-kit-package-builder-15zx.vercel.app',
+  'https://cleaning-kit-package-builder.vercel.app',
 ];
 
 app.use(cors({
   origin: (origin, callback) => {
     const validOrigins = allowedOrigins.filter(Boolean);
-    if (!origin || validOrigins.includes(origin) || validOrigins.some(o => origin.startsWith(o))) {
+    if (
+      !origin ||
+      validOrigins.includes(origin) ||
+      validOrigins.some(o => origin.startsWith(o)) ||
+      /^https:\/\/.*\.vercel\.app$/.test(origin)
+    ) {
       callback(null, true);
     } else {
       callback(new Error(`CORS policy does not allow access from origin ${origin}`));
