@@ -31,9 +31,9 @@ test.describe("Authentication Flows", () => {
   });
 
   test("should show Quick Demo Login buttons", async ({ page }) => {
-    await page.goto(LOGIN_URL);
-    await expect(page.locator(".quick-login-btn")).toHaveCount(4);
-    await expect(page.locator(".quick-login-btn").first()).toContainText("Admin");
+    await page.goto("/portal");
+    await expect(page.locator(".ops-role-card")).toHaveCount(4);
+    await expect(page.locator(".ops-role-card").first()).toContainText("Admin");
   });
 
   test("should login with admin quick login", async ({ page }) => {
@@ -78,12 +78,12 @@ test.describe("Authentication Flows", () => {
     await page.goto(LOGIN_URL);
     await expect(page.locator(".auth-remember")).toContainText("Remember me");
     await expect(page.locator(".auth-forgot")).toContainText("Forgot password?");
-    await expect(page.locator(".auth-footer a")).toContainText("Register");
+    await expect(page.locator(".customer-signup-btn")).toContainText("Create Account");
   });
 
   test("should show register link and navigate to register", async ({ page }) => {
     await page.goto(LOGIN_URL);
-    await page.locator(".auth-footer a").click();
+    await page.locator(".customer-signup-btn").click();
     await expect(page).toHaveURL(/register/);
   });
 

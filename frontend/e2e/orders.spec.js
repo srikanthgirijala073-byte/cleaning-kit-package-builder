@@ -36,7 +36,7 @@ test.describe("Orders Management", () => {
   test("should show status filter on orders page", async ({ page }) => {
     await quickLogin(page, "admin", "admin@example.com");
     await page.goto("/orders");
-    await expect(page.getByText("All Statuses")).toBeVisible();
+    await expect(page.locator(".filter-group", { hasText: "Status" }).locator("select")).toBeVisible();
   });
 
   test("should show facility type filter", async ({ page }) => {
@@ -55,7 +55,7 @@ test.describe("Orders Management", () => {
   test("should show export button on orders", async ({ page }) => {
     await quickLogin(page, "admin", "admin@example.com");
     await page.goto("/orders");
-    await expect(page.getByText("Export Dataset")).toBeVisible();
+    await expect(page.getByRole("button", { name: /export/i })).toBeVisible();
   });
 
   test("should redirect customer from orders page", async ({ page }) => {

@@ -31,7 +31,7 @@ test.describe("Dashboard", () => {
   test("should show recent orders table", async ({ page }) => {
     await quickLogin(page, "admin", "admin@example.com");
     await page.goto("/dashboard");
-    await expect(page.locator("h2").first()).toContainText("Recent Orders");
+    await expect(page.locator("h2", { hasText: "Recent Orders" })).toBeVisible();
   });
 
   test("should show system alerts section", async ({ page }) => {

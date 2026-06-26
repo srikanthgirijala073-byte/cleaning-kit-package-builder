@@ -49,7 +49,7 @@ test.describe("Inventory Management", () => {
     await quickLogin(page, "admin", "admin@example.com");
     await page.goto("/inventory");
     await expect(page.getByText("Product Name")).toBeVisible();
-    await expect(page.getByText("Current Stock")).toBeVisible();
+    await expect(page.getByText("Stock Level")).toBeVisible();
     await expect(page.getByText("Status")).toBeVisible();
   });
 
