@@ -1,0 +1,27 @@
+.notfound-container{
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+height:100vh;
+background:#f8fafc;
+}
+
+.notfound-container h1{
+font-size:120px;
+color:#2563eb;
+}
+
+.notfound-container h2{
+margin-bottom:30px;
+color:#475569;
+}
+
+.notfound-container button{
+padding:15px 30px;
+border:none;
+background:#2563eb;
+color:white;
+border-radius:10px;
+cursor:pointer;
+}

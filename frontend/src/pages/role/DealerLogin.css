@@ -1,0 +1,17 @@
+.dealer-login-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0c4a6e 0%, #0ea5e9 100%); padding: 24px; }
+.dealer-login-card { background: white; border-radius: 20px; padding: 40px; width: 100%; max-width: 420px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+.dealer-login-header { text-align: center; margin-bottom: 28px; }
+.dealer-logo { width: 72px; height: 72px; background: linear-gradient(135deg, #0c4a6e, #0ea5e9); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 32px; color: white; margin: 0 auto 16px; }
+.dealer-login-header h1 { font-size: 26px; font-weight: 800; color: #0f172a; margin: 0 0 6px; }
+.dealer-login-header p { color: #64748b; font-size: 14px; }
+.dealer-error { background: #fee2e2; border: 1px solid #fca5a5; color: #dc2626; padding: 12px 16px; border-radius: 10px; font-size: 14px; margin-bottom: 20px; }
+.dealer-form { display: flex; flex-direction: column; gap: 16px; }
+.dealer-field label { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px; }
+.dealer-field input { width: 100%; padding: 12px 14px; border: 1.5px solid #e2e8f0; border-radius: 10px; font-size: 14px; outline: none; box-sizing: border-box; }
+.dealer-field input:focus { border-color: #0ea5e9; box-shadow: 0 0 0 3px rgba(14,165,233,0.12); }
+.dealer-submit { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 13px; background: linear-gradient(135deg, #0c4a6e, #0ea5e9); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 8px; }
+.dealer-submit:disabled { opacity: 0.7; cursor: not-allowed; }
+.dealer-demo-hint { background: #f0f9ff; border: 1px solid #bae6fd; color: #0369a1; padding: 12px 16px; border-radius: 10px; font-size: 13px; margin-top: 20px; line-height: 1.6; }
+.dealer-back { text-align: center; margin-top: 16px; }
+.dealer-back button { background: none; border: none; color: #64748b; font-size: 13px; cursor: pointer; }
+.dealer-back button:hover { color: #0f172a; text-decoration: underline; }

@@ -1,0 +1,100 @@
+/* ===================================
+   STATISTICS CARD — Redesigned
+=================================== */
+.statistics-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+    border: 1px solid rgba(226, 232, 240, 0.7);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.statistics-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--card-accent, #6366f1), transparent);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+.statistics-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    border-color: rgba(99, 102, 241, 0.15);
+}
+
+.statistics-card:hover::before {
+    opacity: 1;
+}
+
+.statistics-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 22px;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.statistics-icon::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.statistics-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.statistics-content h4 {
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.statistics-content h2 {
+    color: #0f172a;
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 4px;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+}
+
+.statistics-percentage {
+    color: #10b981;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 2px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.statistics-subtitle {
+    color: #94a3b8;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

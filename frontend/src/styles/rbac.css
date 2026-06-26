@@ -1,0 +1,558 @@
+/* =========================================================
+   Ops Access Portal — shared design tokens & components
+   Used by: RoleSelect, AdminLogin, ManagerLogin, StaffLogin,
+            AdminDashboard, ManagerDashboard, StaffDashboard
+   ========================================================= */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap");
+
+.ops-scope {
+  --ops-bg: #060810;
+  --ops-bg-soft: #0b0e18;
+  --ops-surface: rgba(255, 255, 255, 0.035);
+  --ops-surface-hover: rgba(255, 255, 255, 0.06);
+  --ops-border: rgba(255, 255, 255, 0.09);
+  --ops-border-soft: rgba(255, 255, 255, 0.05);
+  --ops-text: #eaecf2;
+  --ops-text-muted: #8991a6;
+  --ops-text-faint: #5b6378;
+
+  --ops-admin: #a78bfa;
+  --ops-admin-dim: rgba(167, 139, 250, 0.14);
+  --ops-manager: #2dd4bf;
+  --ops-manager-dim: rgba(45, 212, 191, 0.14);
+  --ops-staff: #f5a524;
+  --ops-staff-dim: rgba(245, 165, 36, 0.14);
+
+  --ops-danger: #f87171;
+  --ops-danger-dim: rgba(248, 113, 113, 0.12);
+  --ops-success: #34d399;
+  --ops-success-dim: rgba(52, 211, 153, 0.12);
+
+  --ops-radius: 16px;
+  --ops-radius-sm: 10px;
+
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  color: var(--ops-text);
+  min-height: 100vh;
+  width: 100%;
+  background: var(--ops-bg);
+  position: relative;
+  overflow-x: hidden;
+}
+
+.ops-scope * {
+  box-sizing: border-box;
+}
+
+.ops-mono {
+  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+}
+
+/* ---------- background texture ---------- */
+.ops-grid-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(circle at 50% 20%, black, transparent 75%);
+}
+
+.ops-glow {
+  position: fixed;
+  width: 480px;
+  height: 480px;
+  border-radius: 50%;
+  filter: blur(150px);
+  opacity: 0.22;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ---------- page shells ---------- */
+.ops-center-shell {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.ops-brand-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 36px;
+}
+
+.ops-brand-mark {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #a78bfa 0%, #2dd4bf 100%);
+  font-size: 18px;
+  color: #060810;
+  font-weight: 800;
+}
+
+.ops-brand-text {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ops-text-muted);
+}
+
+.ops-brand-text strong {
+  color: var(--ops-text);
+}
+
+/* ---------- keycard badge (signature element) ---------- */
+.ops-keycard {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 14px 7px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--ops-border);
+  background: var(--ops-surface);
+  margin-bottom: 22px;
+}
+
+.ops-keycard-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.ops-keycard-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.ops-keycard-strip {
+  width: 36px;
+  height: 4px;
+  border-radius: 4px;
+  margin-left: 2px;
+}
+
+/* role accent helpers */
+.ops-accent-admin { color: var(--ops-admin); }
+.ops-accent-manager { color: var(--ops-manager); }
+.ops-accent-staff { color: var(--ops-staff); }
+
+.ops-bg-admin { background: var(--ops-admin); }
+.ops-bg-manager { background: var(--ops-manager); }
+.ops-bg-staff { background: var(--ops-staff); }
+
+.ops-dim-admin { background: var(--ops-admin-dim); }
+.ops-dim-manager { background: var(--ops-manager-dim); }
+.ops-dim-staff { background: var(--ops-staff-dim); }
+
+/* ---------- card ---------- */
+.ops-card {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  background: var(--ops-bg-soft);
+  border: 1px solid var(--ops-border);
+  border-radius: var(--ops-radius);
+  padding: 36px 32px;
+  box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.6);
+}
+
+.ops-card-title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
+
+.ops-card-subtitle {
+  font-size: 14px;
+  color: var(--ops-text-muted);
+  margin-bottom: 28px;
+  line-height: 1.5;
+}
+
+/* ---------- form ---------- */
+.ops-field {
+  margin-bottom: 18px;
+}
+
+.ops-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ops-text-faint);
+  margin-bottom: 8px;
+}
+
+.ops-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ops-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--ops-border);
+  border-radius: var(--ops-radius-sm);
+  padding: 13px 14px;
+  font-size: 14.5px;
+  color: var(--ops-text);
+  transition: border-color 0.15s ease, background 0.15s ease;
+  font-family: inherit;
+}
+
+.ops-input::placeholder {
+  color: var(--ops-text-faint);
+}
+
+.ops-input:focus {
+  outline: none;
+  border-color: var(--ops-focus, var(--ops-admin));
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.ops-input-wrap.has-toggle .ops-input {
+  padding-right: 46px;
+}
+
+.ops-eye-toggle {
+  position: absolute;
+  right: 6px;
+  background: none;
+  border: none;
+  color: var(--ops-text-faint);
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  transition: color 0.15s ease;
+}
+
+.ops-eye-toggle:hover {
+  color: var(--ops-text);
+}
+
+.ops-row-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  font-size: 13.5px;
+}
+
+.ops-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ops-text-muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.ops-checkbox-row input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--ops-focus, var(--ops-admin));
+  cursor: pointer;
+}
+
+.ops-link {
+  color: var(--ops-text-muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.ops-link:hover {
+  color: var(--ops-text);
+  text-decoration: underline;
+}
+
+.ops-submit {
+  width: 100%;
+  border: none;
+  border-radius: var(--ops-radius-sm);
+  padding: 13px 16px;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #060810;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+  background: var(--ops-focus, var(--ops-admin));
+}
+
+.ops-submit:hover:not(:disabled) {
+  opacity: 0.92;
+}
+
+.ops-submit:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+.ops-submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.ops-spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid rgba(6, 8, 16, 0.3);
+  border-top-color: #060810;
+  animation: ops-spin 0.7s linear infinite;
+}
+
+@keyframes ops-spin {
+  to { transform: rotate(360deg); }
+}
+
+.ops-footer-note {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--ops-text-faint);
+}
+
+.ops-back-link {
+  margin-top: 28px;
+  text-align: center;
+}
+
+/* ---------- role select grid ---------- */
+.ops-select-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  width: 100%;
+  max-width: 560px;
+}
+
+@media (max-width: 540px) {
+  .ops-select-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ops-role-card {
+  text-align: left;
+  background: var(--ops-bg-soft);
+  border: 1px solid var(--ops-border);
+  border-radius: var(--ops-radius);
+  padding: 24px 20px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.12s ease, background 0.15s ease;
+  color: var(--ops-text);
+  font-family: inherit;
+}
+
+.ops-role-card:hover {
+  transform: translateY(-2px);
+  background: var(--ops-surface-hover);
+}
+
+.ops-role-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 19px;
+  margin-bottom: 14px;
+}
+
+.ops-role-name {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.ops-role-desc {
+  font-size: 12.5px;
+  color: var(--ops-text-muted);
+  line-height: 1.5;
+}
+
+/* ---------- dashboards ---------- */
+.ops-dash-topbar {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 28px;
+  border-bottom: 1px solid var(--ops-border);
+  background: rgba(6, 8, 16, 0.6);
+  backdrop-filter: blur(6px);
+}
+
+.ops-dash-body {
+  position: relative;
+  z-index: 1;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 36px 28px 60px;
+}
+
+.ops-logout-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--ops-border);
+  color: var(--ops-text-muted);
+  padding: 9px 16px;
+  border-radius: var(--ops-radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.ops-logout-btn:hover {
+  color: var(--ops-text);
+  border-color: var(--ops-text-faint);
+}
+
+.ops-panel {
+  background: var(--ops-bg-soft);
+  border: 1px solid var(--ops-border);
+  border-radius: var(--ops-radius);
+  padding: 24px;
+  margin-bottom: 22px;
+}
+
+.ops-panel-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.ops-panel-subtitle {
+  font-size: 13px;
+  color: var(--ops-text-muted);
+  margin-bottom: 18px;
+}
+
+.ops-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 600px) {
+  .ops-form-grid { grid-template-columns: 1fr; }
+}
+
+.ops-btn-sm {
+  border: none;
+  border-radius: var(--ops-radius-sm);
+  padding: 10px 16px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #060810;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: opacity 0.15s ease;
+}
+
+.ops-btn-sm:hover { opacity: 0.9; }
+.ops-btn-sm:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.ops-table-wrap {
+  overflow-x: auto;
+}
+
+.ops-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.ops-table th {
+  text-align: left;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ops-text-faint);
+  font-weight: 600;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--ops-border);
+}
+
+.ops-table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--ops-border-soft);
+  color: var(--ops-text);
+}
+
+.ops-table tr:last-child td {
+  border-bottom: none;
+}
+
+.ops-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.ops-pill-active {
+  background: var(--ops-success-dim);
+  color: var(--ops-success);
+}
+
+.ops-pill-inactive {
+  background: var(--ops-danger-dim);
+  color: var(--ops-danger);
+}
+
+.ops-empty-row {
+  text-align: center;
+  color: var(--ops-text-faint);
+  padding: 28px 12px !important;
+}
+
+.ops-welcome-title {
+  font-size: 26px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.ops-welcome-subtitle {
+  font-size: 14px;
+  color: var(--ops-text-muted);
+  margin-bottom: 30px;
+}

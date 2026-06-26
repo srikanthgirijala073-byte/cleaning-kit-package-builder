@@ -1,0 +1,36 @@
+.reorder-dashboard { padding: 30px; background: #f8fafc; min-height: 100vh; }
+.ro-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+.ro-header h1 { font-size: 36px; color: #0f172a; margin-bottom: 8px; }
+.ro-header p { color: #64748b; }
+
+.ro-suggestions { padding: 20px; margin-bottom: 24px; }
+.ro-suggestions h3 { font-size: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.ro-suggestions-list { display: flex; flex-direction: column; gap: 8px; }
+.ro-suggestion-item { display: flex; gap: 16px; align-items: center; padding: 10px 14px; background: #fefce8; border: 1px solid #fde68a; border-radius: 10px; font-size: 14px; color: #334155; }
+.ro-suggestion-product { flex: 2; font-weight: 600; }
+.ro-suggestion-current, .ro-suggestion-min, .ro-suggestion-reorder { flex: 1; }
+.ro-suggestion-reorder strong { color: #2563eb; }
+
+.ro-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+.ro-tab { padding: 10px 20px; border: 1px solid #e2e8f0; background: white; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 14px; color: #64748b; transition: all 0.2s; }
+.ro-tab:hover { border-color: #93c5fd; color: #2563eb; }
+.ro-tab.active { background: #2563eb; color: white; border-color: #2563eb; }
+
+.ro-table { overflow-x: auto; padding: 0; }
+.ro-table table { width: 100%; border-collapse: collapse; }
+.ro-table th { background: #2563eb; color: white; padding: 16px; text-align: left; }
+.ro-table td { padding: 16px; border-bottom: 1px solid #e2e8f0; }
+.ro-table tr:hover { background: #f8fafc; }
+
+.ro-status-pill { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+.ro-status-draft { background: #f1f5f9; color: #475569; }
+.ro-status-pending { background: #fef3c7; color: #d97706; }
+.ro-status-approved { background: #dbeafe; color: #1d4ed8; }
+.ro-status-ordered { background: #ede9fe; color: #7c3aed; }
+.ro-status-received { background: #d1fae5; color: #059669; }
+
+@media (max-width: 768px) {
+  .reorder-dashboard { padding: 20px; }
+  .ro-header { flex-direction: column; align-items: flex-start; gap: 15px; }
+  .ro-suggestion-item { flex-wrap: wrap; }
+}

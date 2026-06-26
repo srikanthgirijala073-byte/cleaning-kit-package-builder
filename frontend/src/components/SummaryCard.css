@@ -1,0 +1,47 @@
+.summary-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    transition: 0.3s;
+}
+
+.summary-card:hover {
+    transform: translateY(-5px);
+}
+
+.summary-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 18px;
+    color: white;
+    font-size: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.summary-content {
+    flex: 1;
+}
+
+.summary-content h4 {
+    color: #64748b;
+    margin-bottom: 10px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.summary-content h2 {
+    color: #0f172a;
+    font-size: 30px;
+    margin-bottom: 8px;
+}
+
+.summary-subtitle {
+    color: #10b981;
+    font-size: 14px;
+}

@@ -1,0 +1,32 @@
+.quantity-selector {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.quantity-btn {
+    width: 45px;
+    height: 45px;
+    border: none;
+    outline: none;
+    background: #2563eb;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.quantity-btn:hover {
+    background: #1d4ed8;
+}
+
+.quantity-value {
+    min-width: 40px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 600;
+    color: #0f172a;
+}

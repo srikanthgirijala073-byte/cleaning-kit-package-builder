@@ -1,0 +1,58 @@
+/* ===================================
+   STATUS BADGE — Redesigned
+=================================== */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+}
+
+.status-badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+}
+
+/* Completed */
+.status-completed {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+/* Pending */
+.status-pending {
+    background: #fef9c3;
+    color: #a16207;
+}
+
+/* Processing */
+.status-processing {
+    background: #ede9fe;
+    color: #6d28d9;
+}
+
+/* Delivered */
+.status-delivered {
+    background: #ccfbf1;
+    color: #0f766e;
+}
+
+/* Cancelled */
+.status-cancelled {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* Default */
+.status-default {
+    background: #f1f5f9;
+    color: #64748b;
+}

@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Environment variables — NEVER commit real credentials
+.env
+backend/.env
+frontend/.env
+
+# Build output
+dist/
+build/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Uploads (user-generated content)
+backend/uploads/*
+!backend/uploads/.gitkeep

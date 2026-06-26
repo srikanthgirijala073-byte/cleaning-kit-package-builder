@@ -1,0 +1,860 @@
+/* Fullscreen simulator container */
+.simulator-popup-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+  padding: 24px;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  user-select: none;
+}
+
+/* -------------------------------------------------------------
+   GOOGLE THEME STYLING (Google Sans / Roboto style)
+   ------------------------------------------------------------- */
+.simulator-popup-container.google-theme {
+  background: #ffffff;
+}
+
+.google-card {
+  width: 100%;
+  max-width: 450px;
+  min-height: 500px;
+  padding: 40px;
+  box-sizing: border-box;
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+}
+
+.google-logo {
+  font-size: 24px;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+}
+
+.google-title {
+  color: #202124;
+  font-size: 24px;
+  font-weight: 400;
+  text-align: center;
+  margin: 0 0 8px 0;
+  font-family: "Google Sans", Roboto, Arial, sans-serif;
+}
+
+.google-subtitle {
+  color: #202124;
+  font-size: 16px;
+  font-weight: 400;
+  text-align: center;
+  margin: 0 0 28px 0;
+}
+
+/* Account Chooser List */
+.google-account-list {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 24px;
+}
+
+.google-account-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #e8eaed;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.google-account-item:hover {
+  background-color: #f8f9fa;
+}
+
+.google-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #ffffff;
+  font-weight: 500;
+  font-size: 14px;
+  margin-right: 12px;
+}
+
+.google-avatar.another-avatar {
+  background-color: #f1f3f4;
+  color: #5f6368;
+}
+
+.google-account-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.google-account-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #3c4043;
+}
+
+.google-account-email {
+  font-size: 12px;
+  color: #5f6368;
+}
+
+/* Google Inputs (Floating Labels) */
+.google-input-group {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.google-input {
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+  font-size: 16px;
+  outline: none;
+  background: transparent;
+  color: #202124;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.google-input:focus {
+  border: 2px solid #1a73e8;
+  padding: 15px; /* Offset for border width change */
+}
+
+.google-input.error {
+  border-color: #d93025;
+}
+
+.google-label {
+  position: absolute;
+  left: 16px;
+  top: 18px;
+  color: #5f6368;
+  font-size: 16px;
+  transition: all 0.2s;
+  pointer-events: none;
+  background: #ffffff;
+  padding: 0 4px;
+}
+
+/* Floating behavior */
+.google-input:focus ~ .google-label,
+.google-input:not(:placeholder-shown) ~ .google-label {
+  top: -8px;
+  left: 10px;
+  font-size: 12px;
+  color: #1a73e8;
+}
+
+.google-input.error ~ .google-label {
+  color: #d93025;
+}
+
+.google-error-msg {
+  color: #d93025;
+  font-size: 12px;
+  margin-top: 6px;
+  text-align: left;
+}
+
+.google-help-link {
+  text-align: left;
+  margin-bottom: 30px;
+}
+
+.google-help-link a {
+  color: #1a73e8;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.google-help-link a:hover {
+  text-decoration: underline;
+}
+
+.google-terms-notice {
+  color: #5f6368;
+  font-size: 12px;
+  line-height: 1.6;
+  text-align: left;
+  margin-bottom: 35px;
+}
+
+.google-terms-notice a {
+  color: #1a73e8;
+  text-decoration: none;
+}
+
+.google-show-pwd {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 14px;
+  color: #202124;
+  cursor: pointer;
+  text-align: left;
+}
+
+.google-show-pwd input {
+  cursor: pointer;
+}
+
+.google-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+.google-btn-text {
+  background: none;
+  border: none;
+  color: #1a73e8;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 9px 12px;
+  border-radius: 4px;
+}
+
+.google-btn-text:hover {
+  background-color: rgba(26, 115, 232, 0.04);
+}
+
+.google-btn-primary {
+  background-color: #1a73e8;
+  border: none;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+}
+
+.google-btn-primary:hover {
+  background-color: #1557b0;
+}
+
+/* User Identity Pill */
+.google-email-pill {
+  display: inline-flex;
+  align-items: center;
+  align-self: center;
+  padding: 4px 12px;
+  border: 1px solid #dadce0;
+  border-radius: 16px;
+  font-size: 14px;
+  cursor: pointer;
+  margin: 0 auto;
+  gap: 8px;
+}
+
+.google-email-pill:hover {
+  background-color: #f8f9fa;
+}
+
+.pill-avatar {
+  font-size: 12px;
+}
+
+.pill-email {
+  color: #3c4043;
+  font-weight: 500;
+}
+
+.pill-arrow {
+  font-size: 8px;
+  color: #5f6368;
+}
+
+/* Google Spinner Layout */
+.google-loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  text-align: center;
+}
+
+.google-spinner-logo {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  margin-bottom: 24px;
+  animation: rotateSpinner 2s linear infinite;
+}
+
+.google-spinner-sector {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 4px solid transparent;
+  box-sizing: border-box;
+}
+
+.sector-blue {
+  border-top-color: #4285F4;
+  animation: arcAnimation 1.5s ease-in-out infinite;
+}
+
+.sector-red {
+  border-right-color: #EA4335;
+  transform: rotate(90deg);
+}
+
+.sector-yellow {
+  border-bottom-color: #FBBC05;
+  transform: rotate(180deg);
+}
+
+.sector-green {
+  border-left-color: #34A853;
+  transform: rotate(270deg);
+}
+
+@keyframes rotateSpinner {
+  100% { transform: rotate(360deg); }
+}
+
+/* -------------------------------------------------------------
+   MICROSOFT THEME STYLING
+   ------------------------------------------------------------- */
+.simulator-popup-container.microsoft-theme {
+  background: #f2f2f2;
+}
+
+.microsoft-card {
+  width: 100%;
+  max-width: 440px;
+  padding: 44px;
+  background: #ffffff;
+  border-radius: 0px; /* Flat design */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-height: 400px;
+}
+
+.microsoft-logo {
+  display: flex;
+  flex-wrap: wrap;
+  width: 24px;
+  height: 24px;
+  gap: 2px;
+  margin-bottom: 24px;
+}
+
+.ms-box {
+  width: 11px;
+  height: 11px;
+}
+
+.ms-red { background: #f25022; }
+.ms-green { background: #7fba00; }
+.ms-blue { background: #00a4ef; }
+.ms-yellow { background: #ffb900; }
+
+.ms-brand-name {
+  display: none;
+}
+
+.ms-title {
+  color: #1b1b1b;
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+  text-align: left;
+}
+
+.ms-account-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ms-account-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color 0.1s;
+}
+
+.ms-account-item:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.ms-avatar {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  margin-right: 12px;
+}
+
+.ms-avatar.another-avatar {
+  background: #e6e6e6;
+  color: #505050;
+  border-radius: 50%;
+}
+
+.ms-account-info {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.ms-account-name {
+  font-size: 15px;
+  color: #1b1b1b;
+  font-weight: 500;
+}
+
+.ms-account-email {
+  font-size: 13px;
+  color: #676767;
+}
+
+.ms-input-container {
+  margin-bottom: 16px;
+}
+
+.ms-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #666666;
+  border-bottom: 1px solid #1b1b1b;
+  border-radius: 0;
+  font-size: 15px;
+  outline: none;
+  background: transparent;
+  color: #1b1b1b;
+  box-sizing: border-box;
+}
+
+.ms-input:focus {
+  border-color: #0067b8;
+  border-bottom-width: 2px;
+}
+
+.ms-input.error {
+  border-color: #e81123;
+  border-bottom-width: 2px;
+}
+
+.ms-error-msg {
+  color: #e81123;
+  font-size: 13px;
+  text-align: left;
+  margin-top: 6px;
+}
+
+.ms-notice {
+  text-align: left;
+  font-size: 13px;
+  color: #1b1b1b;
+  margin-bottom: 24px;
+}
+
+.ms-notice a {
+  color: #0067b8;
+  text-decoration: none;
+}
+
+.ms-notice a:hover {
+  text-decoration: underline;
+}
+
+.ms-identity-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 14px;
+  color: #1b1b1b;
+  cursor: pointer;
+  align-self: flex-start;
+  gap: 6px;
+}
+
+.ms-identity-pill:hover {
+  text-decoration: underline;
+}
+
+.ms-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.ms-btn-primary, .ms-btn-secondary {
+  border: none;
+  padding: 6px 12px;
+  min-width: 108px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.ms-btn-primary {
+  background-color: #0067b8;
+  color: #ffffff;
+}
+
+.ms-btn-primary:hover {
+  background-color: #005da6;
+}
+
+.ms-btn-secondary {
+  background-color: #cccccc;
+  color: #1b1b1b;
+}
+
+.ms-btn-secondary:hover {
+  background-color: #b3b3b3;
+}
+
+/* Microsoft Dots Loader */
+.ms-loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: auto 0;
+  text-align: left;
+}
+
+.ms-dots-loader {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 24px;
+}
+
+.ms-dots-loader div {
+  width: 5px;
+  height: 5px;
+  background-color: #0067b8;
+  border-radius: 50%;
+  animation: msDotWave 1.2s infinite ease-in-out;
+}
+
+.ms-dots-loader div:nth-child(2) { animation-delay: 0.15s; }
+.ms-dots-loader div:nth-child(3) { animation-delay: 0.3s; }
+.ms-dots-loader div:nth-child(4) { animation-delay: 0.45s; }
+.ms-dots-loader div:nth-child(5) { animation-delay: 0.6s; }
+
+@keyframes msDotWave {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* -------------------------------------------------------------
+   GITHUB THEME STYLING
+   ------------------------------------------------------------- */
+.simulator-popup-container.github-theme {
+  background-color: #f6f8fa;
+}
+
+.github-card {
+  width: 100%;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.github-logo {
+  color: #24292f;
+  margin-bottom: 24px;
+}
+
+.github-title {
+  font-size: 24px;
+  font-weight: 300;
+  color: #24292f;
+  margin: 0 0 16px 0;
+}
+
+.github-subtitle {
+  font-size: 14px;
+  color: #57606a;
+  margin-top: -10px;
+  margin-bottom: 24px;
+}
+
+/* GitHub Form Wrapper */
+.github-form {
+  width: 100%;
+  background-color: #ffffff;
+  border: 1px solid #d8dee4;
+  border-radius: 6px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.github-form-body {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 15px;
+  text-align: left;
+}
+
+.github-form-body label {
+  font-size: 14px;
+  font-weight: 400;
+  color: #24292f;
+}
+
+.github-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.github-forgot-link {
+  font-size: 12px;
+  color: #0969da;
+  text-decoration: none;
+}
+
+.github-forgot-link:hover {
+  text-decoration: underline;
+}
+
+.github-input {
+  width: 100%;
+  padding: 5px 12px;
+  font-size: 14px;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  box-sizing: border-box;
+  background-color: #f6f8fa;
+  color: #24292f;
+  outline: none;
+  min-height: 32px;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.github-input:focus {
+  border-color: #0969da;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.3);
+}
+
+.github-input.error {
+  border-color: #cf222e;
+}
+
+.github-error-msg {
+  color: #cf222e;
+  font-size: 13px;
+  margin-top: -8px;
+}
+
+.github-account-preview {
+  font-size: 14px;
+  color: #24292f;
+  background: #f6f8fa;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #d8dee4;
+}
+
+.github-actions-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.github-btn-primary {
+  background-color: #2da44e;
+  color: #ffffff;
+  border: 1px solid rgba(27, 31, 36, 0.15);
+  box-shadow: 0 1px 0 rgba(27, 31, 36, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  font-weight: 500;
+  font-size: 14px;
+  padding: 5px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.github-btn-primary:hover {
+  background-color: #2c974b;
+}
+
+.github-btn-cancel {
+  background-color: #f6f8fa;
+  color: #24292f;
+  border: 1px solid #d0d7de;
+  font-weight: 500;
+  font-size: 14px;
+  padding: 5px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.github-btn-cancel:hover {
+  background-color: #f3f4f6;
+  border-color: #8c959f;
+}
+
+/* GitHub Chooser List */
+.github-account-list {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #d8dee4;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+}
+
+.github-account-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #d8dee4;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.github-account-item:last-child {
+  border-bottom: none;
+}
+
+.github-account-item:hover {
+  background-color: #f6f8fa;
+}
+
+.github-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: 600;
+  font-size: 13px;
+  margin-right: 12px;
+}
+
+.github-avatar.another-avatar {
+  background-color: #e8ebec;
+  color: #24292f;
+}
+
+.github-account-info {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.github-account-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #24292f;
+}
+
+.github-account-email {
+  font-size: 12px;
+  color: #57606a;
+}
+
+/* GitHub Loader Style */
+.github-loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  border: 1px solid #d8dee4;
+  border-radius: 6px;
+  padding: 40px 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.github-dots-loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #24292f;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: githubSpin 1s linear infinite;
+  margin-bottom: 24px;
+}
+
+@keyframes githubSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.github-loading-container h2 {
+  font-size: 18px;
+  color: #24292f;
+  margin-bottom: 8px;
+}
+
+.github-loading-container p {
+  font-size: 13px;
+  color: #57606a;
+}
+
+/* -------------------------------------------------------------
+   SIMULATOR CALLBACK REDIRECT VIEWS
+   ------------------------------------------------------------- */
+.simulator-callback-card {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+.simulator-callback-card .spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #2563eb;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  animation: githubSpin 1s linear infinite;
+  margin: 0 auto 24px auto;
+}
+
+.simulator-callback-card h2 {
+  font-size: 20px;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.simulator-callback-card p {
+  font-size: 14px;
+  color: #64748b;
+}

@@ -1,0 +1,122 @@
+.smart-insights {
+  background: white;
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+  border: 1px solid rgba(226, 232, 240, 0.7);
+}
+
+.insights-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.insights-header h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.insights-header h3 svg {
+  color: #f59e0b;
+}
+
+.insights-date {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.insights-loading {
+  color: #94a3b8;
+  font-size: 14px;
+  padding: 20px 0;
+  text-align: center;
+}
+
+.insights-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .insights-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.insight-card {
+  padding: 16px;
+  border-radius: 14px;
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.insight-card:hover {
+  transform: translateY(-2px);
+}
+
+.insight-orders {
+  background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+}
+
+.insight-revenue {
+  background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+}
+
+.insight-customers {
+  background: linear-gradient(135deg, #fefce8, #fef3c7);
+}
+
+.insight-pending {
+  background: linear-gradient(135deg, #fef2f2, #fee2e2);
+}
+
+.insight-icon {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.insight-orders .insight-icon svg { color: #6366f1; }
+.insight-revenue .insight-icon svg { color: #059669; }
+.insight-customers .insight-icon svg { color: #d97706; }
+.insight-pending .insight-icon svg { color: #dc2626; }
+
+.insight-value {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.insight-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.insights-summary {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+  border-radius: 10px;
+  font-size: 14px;
+  color: #4338ca;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.insights-summary::before {
+  content: "💡";
+  font-size: 16px;
+}

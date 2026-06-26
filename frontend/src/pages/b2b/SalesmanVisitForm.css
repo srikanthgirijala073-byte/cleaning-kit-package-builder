@@ -1,0 +1,36 @@
+.sv-page { padding: 30px; background: #f8fafc; min-height: 100vh; }
+.sv-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+.sv-header h1 { font-size: 36px; color: #0f172a; margin-bottom: 8px; }
+.sv-header p { color: #64748b; }
+.sv-controls { display: flex; gap: 20px; align-items: flex-end; margin-bottom: 30px; padding: 20px; }
+.sv-list { display: flex; flex-direction: column; gap: 16px; }
+
+.sv-card { padding: 0; overflow: hidden; }
+.sv-card-top { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #e2e8f0; background: #f8fafc; }
+.sv-person-info { display: flex; align-items: center; gap: 12px; }
+.sv-person-info h3 { font-size: 16px; font-weight: 700; color: #0f172a; margin: 0; }
+.sv-person-icon { font-size: 24px; color: #2563eb; background: #dbeafe; padding: 8px; border-radius: 10px; }
+.sv-role { font-size: 12px; color: #64748b; }
+.sv-visit-type { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: #ede9fe; color: #7c3aed; }
+
+.sv-card-body { padding: 20px; }
+.sv-customer-line { display: flex; align-items: center; gap: 8px; color: #334155; margin-bottom: 6px; font-size: 14px; }
+.sv-purpose { color: #475569; font-size: 14px; margin: 8px 0; }
+.sv-notes { color: #64748b; font-size: 13px; font-style: italic; padding: 10px; background: #f8fafc; border-radius: 8px; margin: 8px 0; }
+
+.sv-card-meta { display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; color: #64748b; margin: 10px 0; align-items: center; }
+.sv-outcome { padding: 2px 10px; border-radius: 12px; font-weight: 600; font-size: 12px; }
+.sv-outcome-positive { background: #d1fae5; color: #059669; }
+.sv-outcome-neutral { background: #f1f5f9; color: #475569; }
+.sv-outcome-negative { background: #fee2e2; color: #dc2626; }
+.sv-follow-up { background: #fef3c7; color: #d97706; padding: 2px 10px; border-radius: 12px; font-weight: 600; font-size: 12px; }
+
+.sv-owner { color: #94a3b8; font-size: 12px; margin-top: 4px; }
+.sv-card-actions { display: flex; gap: 8px; padding: 12px 20px; border-top: 1px solid #e2e8f0; background: #f8fafc; }
+.sv-card-actions .icon-btn { flex: 1; padding: 6px 10px; font-size: 12px; border-radius: 8px; }
+
+@media (max-width: 768px) {
+  .sv-page { padding: 20px; }
+  .sv-header { flex-direction: column; align-items: flex-start; gap: 15px; }
+  .sv-controls { flex-direction: column; }
+}

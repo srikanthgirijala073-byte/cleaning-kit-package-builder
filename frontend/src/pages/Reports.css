@@ -1,0 +1,50 @@
+.reports-page {
+    padding: 30px;
+    background: #f8fafc;
+    min-height: 100vh;
+}
+
+.reports-header {
+    margin-bottom: 40px;
+}
+
+.reports-header h1 {
+    font-size: 38px;
+    color: #0f172a;
+    margin-bottom: 10px;
+}
+
+.reports-header p {
+    color: #64748b;
+    font-size: 16px;
+}
+
+.reports-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 25px;
+    margin-bottom: 40px;
+}
+
+.reports-alerts {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.reports-table {
+    margin-top: 30px;
+}
+
+@media (max-width: 768px) {
+
+    .reports-page {
+        padding: 20px;
+    }
+
+    .reports-header h1 {
+        font-size: 30px;
+    }
+
+}

@@ -1,0 +1,16 @@
+.empty-state{
+background:white;
+padding:50px;
+border-radius:20px;
+text-align:center;
+box-shadow:0 5px 20px rgba(0,0,0,.1);
+}
+
+.empty-state h2{
+color:#1e293b;
+margin-bottom:10px;
+}
+
+.empty-state p{
+color:#64748b;
+}

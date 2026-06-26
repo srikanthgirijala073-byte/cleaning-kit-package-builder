@@ -1,0 +1,68 @@
+.contract-pricing { padding: 30px; background: #f8fafc; min-height: 100vh; }
+.cp-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+.cp-header h1 { font-size: 36px; color: #0f172a; margin-bottom: 8px; }
+.cp-header p { color: #64748b; }
+.cp-controls { display: flex; gap: 20px; align-items: flex-end; margin-bottom: 30px; padding: 20px; }
+
+.cp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
+.cp-card { padding: 0; overflow: hidden; }
+.cp-card-top { display: flex; align-items: center; gap: 14px; padding: 20px; border-bottom: 1px solid #e2e8f0; background: #f8fafc; }
+.cp-card-top h3 { font-size: 18px; font-weight: 700; color: #0f172a; margin: 0; }
+.cp-card-icon { font-size: 28px; color: #2563eb; }
+.cp-card-body { padding: 20px; }
+.cp-detail-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; color: #475569; }
+.cp-discount { color: #059669; font-size: 16px; }
+.cp-terms { color: #64748b; font-size: 13px; font-style: italic; padding: 10px; background: #f8fafc; border-radius: 8px; margin: 8px 0; }
+.cp-owner { color: #94a3b8; font-size: 12px; margin-top: 4px; }
+
+.cp-status-pill { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+.cp-active { background: #d1fae5; color: #059669; }
+.cp-expiring { background: #fef3c7; color: #d97706; }
+.cp-expired { background: #fee2e2; color: #dc2626; }
+.cp-negotiating { background: #dbeafe; color: #1d4ed8; }
+.cp-terminated { background: #f1f5f9; color: #475569; }
+
+.cp-card-actions { display: flex; gap: 8px; padding: 12px 20px; border-top: 1px solid #e2e8f0; background: #f8fafc; }
+
+.cp-special-section { border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 16px; background: #f8fafc; }
+.cp-special-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.cp-special-header label { font-weight: 600; color: #334155; }
+.cp-special-row { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
+.cp-special-row input { flex: 1; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; }
+.cp-special-row .icon-btn.delete { padding: 6px; }
+
+/* ===== Expiry Countdown ===== */
+.cp-countdown {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.expired-badge        { background: #fee2e2; color: #dc2626; }
+.expiring-today-badge { background: #fef3c7; color: #92400e; }
+.expiring-soon-badge  { background: #fff7ed; color: #c2410c; }
+.safe-badge           { background: #f0fdf4; color: #166534; }
+
+/* ===== Expiry Warning Banner ===== */
+.cp-expiry-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  background: #fffbeb;
+  border: 1.5px solid #fde68a;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: #78350f;
+}
+
+.cp-banner-icon { color: #d97706; font-size: 16px; flex-shrink: 0; }
+
+@media (max-width: 768px) {
+  .contract-pricing { padding: 20px; }
+  .cp-header { flex-direction: column; align-items: flex-start; gap: 15px; }
+  .cp-controls { flex-direction: column; }
+  .cp-grid { grid-template-columns: 1fr; }
+}
