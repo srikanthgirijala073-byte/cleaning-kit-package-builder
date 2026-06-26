@@ -160,22 +160,21 @@ router.post('/login', async (req, res) => {
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
-    // Store refresh token
+    // Store refresh token (table is user_sessions per schema)
     const refreshExpires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     await query(
-      'INSERT INTO refresh_tokens (user_id, token, expires_at) VALUES (?, ?, ?)',
-      [user.user_id, refreshToken, refreshExpires]
+      'INSERT INTO user_sessions (user_id, refresh_token, device_name, browser, ip_address, expires_at) VALUES (?, ?, ?, ?, ?, ?)',
+      [user.user_id, refreshToken, req.headers['user-agent'] || 'Unknown', req.headers['user-agent'] || 'Unknown', req.ip || '127.0.0.1', refreshExpires]
     );
 
     // Record login history
     const loginResult = await query(
-      'INSERT INTO login_history (user_id, ip_address, device_name, browser, is_current_session) VALUES (?, ?, ?, ?, ?)',
+      'INSERT INTO login_history (user_id, ip_address, device_name, browser) VALUES (?, ?, ?, ?)',
       [
         user.user_id,
         req.ip || '127.0.0.1',
         req.headers['user-agent'] || 'Unknown',
         req.headers['user-agent'] || 'Unknown',
-        true,
       ]
     );
     const historyId = loginResult.insertId;
@@ -248,13 +247,13 @@ router.post('/quick-login', async (req, res) => {
 
       const refreshExpires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
       await query(
-        'INSERT INTO refresh_tokens (user_id, token, expires_at) VALUES (?, ?, ?)',
-        [user.user_id, refreshToken, refreshExpires]
+        'INSERT INTO user_sessions (user_id, refresh_token, device_name, browser, ip_address, expires_at) VALUES (?, ?, ?, ?, ?, ?)',
+        [user.user_id, refreshToken, 'Quick Login', 'Quick Login', req.ip || '127.0.0.1', refreshExpires]
       );
 
       const loginResult = await query(
-        'INSERT INTO login_history (user_id, ip_address, device_name, browser, is_current_session) VALUES (?, ?, ?, ?, ?)',
-        [user.user_id, req.ip || '127.0.0.1', 'Quick Login', 'Quick Login', true]
+        'INSERT INTO login_history (user_id, ip_address, device_name, browser) VALUES (?, ?, ?, ?)',
+        [user.user_id, req.ip || '127.0.0.1', 'Quick Login', 'Quick Login']
       );
 
       await query('UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE user_id = ?', [user.user_id]);

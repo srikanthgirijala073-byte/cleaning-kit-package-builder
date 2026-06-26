@@ -46,7 +46,7 @@ router.get('/charts', authenticate, async (req, res) => {
       SELECT 
         DATE_FORMAT(created_at, '%Y-%m') as month,
         COUNT(*) as orders,
-        COALESCE(SUM(amount), 0) as revenue
+        COALESCE(SUM(total_amount), 0) as revenue
       FROM orders
       WHERE created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
       GROUP BY DATE_FORMAT(created_at, '%Y-%m')
