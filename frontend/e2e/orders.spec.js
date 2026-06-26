@@ -11,6 +11,7 @@ async function quickLogin(page, role, email) {
 
 test.describe("Orders Management", () => {
   test.beforeEach(async ({ page }) => {
+    await page.goto("/");
     await page.evaluate(() => localStorage.clear());
   });
 

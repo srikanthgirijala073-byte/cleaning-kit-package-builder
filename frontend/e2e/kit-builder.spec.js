@@ -11,6 +11,7 @@ async function quickLogin(page, role, email) {
 
 test.describe("Kit Builder", () => {
   test.beforeEach(async ({ page }) => {
+    await page.goto("/");
     await page.evaluate(() => localStorage.clear());
   });
 

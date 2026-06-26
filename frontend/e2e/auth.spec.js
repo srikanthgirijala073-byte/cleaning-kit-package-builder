@@ -18,6 +18,7 @@ async function quickLogin(page, role, email, name) {
 test.describe("Authentication Flows", () => {
 
   test.beforeEach(async ({ page }) => {
+    await page.goto("/");
     await page.evaluate(() => localStorage.clear());
   });
 
