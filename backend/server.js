@@ -17,6 +17,7 @@ const seedRbacUsers = require('./scripts/seedRbacOnStartup');
 
 // Import routes
 const authRoutes = require('./routes/auth');
+const authRoutesExtended = require('./routes/authRoutes'); // Extended auth features (profile, forgot-password, verify-email, etc.)
 const productRoutes = require('./routes/products');
 const orderRoutes = require('./routes/orders');
 const customerRoutes = require('./routes/customers');
@@ -140,6 +141,7 @@ app.use((req, res, next) => {
 // API Routes
 // =======================
 app.use('/api/auth', authRoutes);
+app.use('/api/auth', authRoutesExtended); // Extended: forgot-password, verify-email, profile, login-history, etc.
 app.use('/api/auth', rbacAuthRoutes);
 app.use('/api/admin', rbacAdminRoutes);
 app.use('/api/products', productRoutes);
@@ -261,4 +263,4 @@ const startServer = async () => {
   });
 };
 
-startServer();
+startServer(); // trigger-restart-1

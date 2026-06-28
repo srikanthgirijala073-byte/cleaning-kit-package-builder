@@ -184,3 +184,70 @@
 .add-btn:active {
   transform: scale(0.98);
 }
+
+/* Quantity Editor */
+.product-qty-editor {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  background: #f8fafc;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+}
+
+.qty-btn {
+  background: white;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  color: #334155;
+  transition: all 0.2s;
+}
+
+.qty-btn:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+.qty-val {
+  font-weight: 700;
+  font-size: 15px;
+  color: #0f172a;
+  min-width: 24px;
+  text-align: center;
+}
+
+.line-total {
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  margin-left: 10px;
+}
+
+/* Not Included State */
+.product-card-wrapper.not-included .product-card {
+  opacity: 0.5;
+  border-color: #e2e8f0;
+}
+
+.not-included-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #ef4444;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  z-index: 10;
+}

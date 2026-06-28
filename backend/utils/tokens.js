@@ -12,8 +12,8 @@ const generateAccessToken = (user) => {
       email: user.email,
       role: user.role,
     },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRES_IN || '15m' }
+    process.env.JWT_SECRET || 'cleaning_kit_jwt_secret_key_2026_change_in_production',
+    { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
   );
 };
 

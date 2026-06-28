@@ -43,7 +43,14 @@ API.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    if (error.response && error.response.status === 401 && !originalRequest._retry) {
+    
+    // Don't intercept login/register/refresh endpoints — let them fail naturally
+    const isAuthEndpoint = originalRequest?.url?.includes('/auth/login') ||
+                           originalRequest?.url?.includes('/auth/register') ||
+                           originalRequest?.url?.includes('/auth/refresh') ||
+                           originalRequest?.url?.includes('/auth/quick-login');
+
+    if (error.response && error.response.status === 401 && !originalRequest._retry && !isAuthEndpoint) {
       originalRequest._retry = true;
       try {
         const user = localStorage.getItem("user");
@@ -310,6 +317,12 @@ export const getB2bAccounts = (params) => API.get('/b2b/accounts', { params });
 export const createB2bAccount = (data) => API.post('/b2b/accounts', data);
 export const updateB2bAccount = (id, data) => API.put(`/b2b/accounts/${id}`, data);
 export const getB2bAccountById = (id) => API.get(`/b2b/accounts/${id}`);
+
+// =======================
+// B2B / Saved Kits APIs
+// =======================
+export const saveB2bKit = (data) => API.post('/b2b/kits', data);
+export const getSharedKit = (token) => API.get(`/b2b/kits/shared/${token}`);
 
 // Export axios instance
 export default API;

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import StatisticsCard from "../components/StatisticsCard";
 import DashboardTable from "../components/DashboardTable";
 import NotificationPanel from "../components/NotificationPanel";
@@ -40,6 +41,9 @@ function Dashboard() {
   const [notifications, setNotifications] = useState([]);
   const [products, setProducts] = useState([]);
   const [inventory, setInventory] = useState([]);
+
+  const [savedKits, setSavedKits] = useState([]);
+  const [expandedKitId, setExpandedKitId] = useState(null);
 
   useEffect(() => {
     async function fetchDashboardData() {
@@ -110,7 +114,28 @@ function Dashboard() {
     }
 
     fetchDashboardData();
+
+    // Load saved kits from localStorage
+    const kits = JSON.parse(localStorage.getItem("savedKits") || "[]");
+    setSavedKits(kits);
   }, []);
+
+  const handleDeleteKit = (kitId, e) => {
+    if (e) e.preventDefault();
+    if (!window.confirm("Are you sure you want to delete this saved kit?")) return;
+    const kits = JSON.parse(localStorage.getItem("savedKits") || "[]");
+    const updated = kits.filter(k => k.id !== kitId);
+    localStorage.setItem("savedKits", JSON.stringify(updated));
+    setSavedKits(updated);
+    if (expandedKitId === kitId) {
+      setExpandedKitId(null);
+    }
+  };
+
+  const toggleExpandKit = (kitId, e) => {
+    if (e) e.preventDefault();
+    setExpandedKitId(expandedKitId === kitId ? null : kitId);
+  };
 
   if (loading) {
     return <LoadingSpinner />;
@@ -181,7 +206,7 @@ function Dashboard() {
         />
       </div>
 
-      {/* Revenue Goal Bar */}
+      {/* Revenue Goal Goal Bar */}
       <div className="dashboard-section revenue-goal-section">
         <h2><FaFire style={{ color: "#f59e0b" }} /> Monthly Revenue Goal</h2>
         <div className="revenue-goal-wrapper">
@@ -222,13 +247,13 @@ function Dashboard() {
         <h2 className="smart-alerts-title">Smart Alerts</h2>
         <div className="smart-alerts-grid">
           {stats.lowStockProducts > 0 ? (
-            <div className="smart-alert-card warning">
+            <Link to="/inventory" className="smart-alert-card warning" style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}>
               <FaExclamationTriangle className="sa-icon" />
               <div>
                 <strong>{stats.lowStockProducts} Low Stock Items</strong>
                 <p>Products below minimum level — reorder now</p>
               </div>
-            </div>
+            </Link>
           ) : (
             <div className="smart-alert-card success">
               <FaCheckCircle className="sa-icon" />
@@ -275,6 +300,118 @@ function Dashboard() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* My Saved Kits Section */}
+      <div className="dashboard-section saved-kits-section" style={{ marginTop: "30px", marginBottom: "30px" }}>
+        <h2 style={{ marginBottom: "24px" }}>My Saved Kits</h2>
+        
+        {savedKits.length === 0 ? (
+          <div className="empty-state-kitscard" style={{ padding: "40px", background: "white", borderRadius: "16px", border: "1px solid var(--border)", textAlign: "center" }}>
+            <span style={{ fontSize: "3rem" }}>📦</span>
+            <h3 style={{ margin: "12px 0 6px" }}>No kits saved yet</h3>
+            <p style={{ color: "var(--text-secondary)", marginBottom: "16px" }}>Build your first kit in the Package Builder to see it here!</p>
+            <a href="/kit-builder" className="btn-primary" style={{ display: "inline-block", textDecoration: "none", padding: "10px 20px", borderRadius: "8px", background: "var(--primary)", color: "white", fontWeight: "600" }}>
+              Build Your First Kit
+            </a>
+          </div>
+        ) : (
+          <div className="saved-kits-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "16px" }}>
+            {savedKits.map((kit) => {
+              const dateString = new Date(kit.timestamp).toLocaleDateString("en-IN", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+              });
+              
+              const isExpanded = expandedKitId === kit.id;
+              
+              const useCaseBadges = {
+                hotel: { name: "Hotel Cleaning Kit", color: "#2563eb", bg: "#dbeafe" },
+                office: { name: "Office Cleaning Kit", color: "#10b981", bg: "#d1fae5" },
+                hospital: { name: "Hospital Hygiene Kit", color: "#ef4444", bg: "#fee2e2" },
+                school: { name: "School Cleaning Kit", color: "#f59e0b", bg: "#fef3c7" },
+                custom: { name: "Custom Cleaning Kit", color: "#6366f1", bg: "#eef2ff" }
+              };
+              
+              const badge = useCaseBadges[kit.useCase] || useCaseBadges.custom;
+
+              return (
+                <div key={kit.id} className="saved-kit-card card glass" style={{ padding: "20px", display: "flex", flexDirection: "column", gap: "12px", background: "white", borderRadius: "12px", border: "1px solid var(--border)" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                    <h3 style={{ fontSize: "1.1rem", fontWeight: 700, margin: 0 }}>{kit.name}</h3>
+                    <span 
+                      style={{ 
+                        background: badge.bg, 
+                        color: badge.color, 
+                        padding: "4px 10px", 
+                        borderRadius: "20px", 
+                        fontSize: "0.75rem", 
+                        fontWeight: 700 
+                      }}
+                    >
+                      {badge.name}
+                    </span>
+                  </div>
+                  
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", color: "var(--text-secondary)", marginTop: "4px" }}>
+                    <span>Grand Total: <strong style={{ color: "var(--primary)", fontSize: "0.95rem" }}>₹{Math.round(kit.grandTotal)}</strong></span>
+                    <span>Saved: {dateString}</span>
+                  </div>
+                  
+                  <div className="kit-card-actions" style={{ display: "flex", gap: "10px", marginTop: "8px" }}>
+                    <button 
+                      onClick={(e) => toggleExpandKit(kit.id, e)} 
+                      className="btn-secondary"
+                      style={{ flex: 1, padding: "8px 12px", fontSize: "0.85rem", border: "1px solid var(--border)", background: "transparent", borderRadius: "8px", cursor: "pointer" }}
+                    >
+                      {isExpanded ? "Hide Details" : "View Details"}
+                    </button>
+                    <button 
+                      onClick={(e) => handleDeleteKit(kit.id, e)} 
+                      className="btn-danger"
+                      style={{ 
+                        padding: "8px 12px", 
+                        fontSize: "0.85rem", 
+                        background: "var(--danger-color, #ef4444)", 
+                        color: "white", 
+                        border: "none", 
+                        borderRadius: "8px",
+                        cursor: "pointer",
+                        fontWeight: "600"
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </div>
+
+                  {isExpanded && (
+                    <div className="kit-expanded-details" style={{ borderTop: "1px solid var(--border)", paddingTop: "12px", marginTop: "8px" }}>
+                      <table style={{ width: "100%", fontSize: "0.8rem", borderCollapse: "collapse" }}>
+                        <thead>
+                          <tr style={{ borderBottom: "1px solid var(--border)", textAlign: "left", color: "var(--text-secondary)" }}>
+                            <th style={{ paddingBottom: "6px" }}>Product</th>
+                            <th style={{ paddingBottom: "6px", textAlign: "center" }}>Qty</th>
+                            <th style={{ paddingBottom: "6px", textAlign: "right" }}>Total</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {kit.items.map(item => (
+                            <tr key={item.product_id} style={{ borderBottom: "1px dotted var(--border)" }}>
+                              <td style={{ padding: "6px 0" }}>{item.name}</td>
+                              <td style={{ padding: "6px 0", textAlign: "center" }}>{item.quantity}</td>
+                              <td style={{ padding: "6px 0", textAlign: "right" }}>₹{item.price * item.quantity}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Orders Table */}

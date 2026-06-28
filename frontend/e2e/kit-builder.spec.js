@@ -18,7 +18,7 @@ test.describe("Kit Builder", () => {
   test("should display Kit Builder page for customer", async ({ page }) => {
     await quickLogin(page, "customer", "customer@example.com");
     await page.goto("/kit-builder");
-    await expect(page.locator("h1")).toContainText("Cleaning Kit Package Builder");
+    await expect(page.locator("h1").first()).toContainText("Cleaning Kit Package Builder");
   });
 
   test("should show Manual Package Builder tab by default", async ({ page }) => {
@@ -42,7 +42,7 @@ test.describe("Kit Builder", () => {
   test("should show selected package section", async ({ page }) => {
     await quickLogin(page, "customer", "customer@example.com");
     await page.goto("/kit-builder");
-    await expect(page.getByText("Selected Package Products")).toBeVisible();
+    await expect(page.getByText("Package Summary")).toBeVisible();
   });
 
   test("should show empty cart message initially", async ({ page }) => {
@@ -69,12 +69,12 @@ test.describe("Kit Builder", () => {
   test("should show Kit Builder for staff role", async ({ page }) => {
     await quickLogin(page, "staff", "staff@example.com");
     await page.goto("/kit-builder");
-    await expect(page.locator("h1")).toContainText("Cleaning Kit Package Builder");
+    await expect(page.locator("h1").first()).toContainText("Cleaning Kit Package Builder");
   });
 
   test("should show Kit Builder for admin role", async ({ page }) => {
     await quickLogin(page, "admin", "admin@example.com");
     await page.goto("/kit-builder");
-    await expect(page.locator("h1")).toContainText("Cleaning Kit Package Builder");
+    await expect(page.locator("h1").first()).toContainText("Cleaning Kit Package Builder");
   });
 });

@@ -35,7 +35,7 @@ function Reports() {
       }
     } catch (error) {
       console.error(`Error generating ${reportId} report:`, error);
-      alert("Failed to generate report.");
+      alert("Failed to generate report: " + (error.response?.data?.message || error.message));
     } finally {
       setLoading(false);
     }

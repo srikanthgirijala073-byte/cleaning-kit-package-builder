@@ -17,7 +17,7 @@ router.get('/stats', authenticate, async (req, res) => {
 
     try {
       const totalOrders = await getOne(`SELECT COUNT(*) as count FROM orders${orderFilter}`, params);
-      const totalRevenue = await getOne(`SELECT COALESCE(SUM(total_amount), 0) as total FROM orders${orderFilter ? orderFilter + " AND status IN ('delivered', 'shipped')" : " WHERE status IN ('delivered', 'shipped')"}`, params);
+      const totalRevenue = await getOne(`SELECT COALESCE(SUM(amount), 0) as total FROM orders${orderFilter ? orderFilter + " AND status IN ('delivered', 'shipped')" : " WHERE status IN ('delivered', 'shipped')"}`, params);
       const pendingOrders = await getOne(`SELECT COUNT(*) as count FROM orders${orderFilter ? orderFilter + " AND status = 'placed'" : " WHERE status = 'placed'"}`, params);
       const processingOrders = await getOne(`SELECT COUNT(*) as count FROM orders${orderFilter ? orderFilter + " AND status = 'processing'" : " WHERE status = 'processing'"}`, params);
       const totalCustomers = await getOne('SELECT COUNT(*) as count FROM customers');
@@ -51,7 +51,7 @@ router.get('/charts', authenticate, async (req, res) => {
       SELECT 
         DATE_FORMAT(created_at, '%Y-%m') as month,
         COUNT(*) as orders,
-        COALESCE(SUM(total_amount), 0) as revenue
+        COALESCE(SUM(amount), 0) as revenue
       FROM orders
       WHERE created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
       GROUP BY DATE_FORMAT(created_at, '%Y-%m')

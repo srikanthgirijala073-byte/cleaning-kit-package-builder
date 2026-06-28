@@ -42,7 +42,7 @@ const authController = {
         role: role || 'customer',
         phone: phone || '',
         address: address || '',
-        email_verified: false // User must verify email before accessing all features
+        email_verified: true // Auto-verify so customers can login immediately
       });
 
       const user = await User.findById(userId);
@@ -154,14 +154,8 @@ const authController = {
         return res.status(401).json({ message: 'Invalid email or password.' });
       }
 
-      // Check email verification status
-      if (!user.email_verified) {
-        return res.status(403).json({
-          message: 'Your email address is not verified yet. Please check your inbox for the verification link.',
-          emailNotVerified: true,
-          email: user.email
-        });
-      }
+      // Email verification is optional - allow login but note status in response
+      // (Previously blocked unverified users; now we allow login for better UX)
 
       // Successful credentials verification - Reset failed attempts
       await User.resetFailedAttempts(user.user_id);
@@ -1243,6 +1237,129 @@ const authController = {
         refreshToken,
         historyId,
         user: userWithoutPassword
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async firebaseLogin(req, res, next) {
+    try {
+      const { email, name, profileImage, uid } = req.body;
+      if (!email) {
+        return res.status(400).json({ message: 'Email address is required.' });
+      }
+
+      // Determine role based on email mapping
+      const emailLower = email.toLowerCase().trim();
+      let role = 'customer';
+      let resolvedName = name || 'Google User';
+
+      const ROLE_CREDENTIALS = {
+        'srikanthgirijala073@gmail.com': { role: 'admin', name: 'Srikanth Girijala' },
+        'kt493342@gmail.com': { role: 'manager', name: 'Manager' },
+        'jahnavisadhu26@gmail.com': { role: 'staff', name: 'Jahnavi Sadhu' }
+      };
+
+      if (ROLE_CREDENTIALS[emailLower]) {
+        role = ROLE_CREDENTIALS[emailLower].role;
+        resolvedName = ROLE_CREDENTIALS[emailLower].name || resolvedName;
+      }
+
+      let user = await User.findByGoogleId(uid);
+      if (!user) {
+        user = await User.findByEmail(emailLower);
+        if (user) {
+          // Link Google ID and update profile image & role if it's a role credential
+          const updates = { google_id: uid, email_verified: 1 };
+          if (role !== 'customer') {
+            updates.role = role;
+          }
+          if (profileImage && !user.profile_image) {
+            updates.profile_image = profileImage;
+          }
+          await User.update(user.user_id, updates);
+          user = await User.findById(user.user_id);
+        } else {
+          // Create user
+          const newUserId = await User.create({
+            name: resolvedName,
+            email: emailLower,
+            google_id: uid,
+            profile_image: profileImage || '',
+            email_verified: true,
+            role: role
+          });
+          user = await User.findById(newUserId);
+        }
+      } else {
+        // User exists by Google ID, let's update their role if they are in the ROLE_CREDENTIALS mapping
+        if (role !== 'customer' && user.role !== role) {
+          await User.update(user.user_id, { role });
+          user.role = role;
+        }
+      }
+
+      // Generate tokens
+      const { accessToken, refreshToken } = generateTokens(user.user_id);
+      const days = 30;
+      const expiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+
+      const { browser, device } = parseUserAgent(req.headers['user-agent']);
+      const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+      const location = await getLocationFromIp(ip);
+
+      await Session.create({
+        userId: user.user_id,
+        refreshToken,
+        deviceName: device,
+        browser,
+        ipAddress: ip,
+        expiresAt
+      });
+
+      const historyId = await LoginHistory.create({
+        userId: user.user_id,
+        deviceName: device,
+        browser,
+        ipAddress: ip,
+        location
+      });
+
+      await User.updateLastLogin(user.user_id);
+
+      await AuditLog.create({
+        userId: user.user_id,
+        action: 'LOGIN_FIREBASE_GOOGLE',
+        details: `Logged in using Firebase Google Sign-In. Browser: ${browser}. IP: ${ip}.`,
+        ipAddress: ip
+      });
+
+      const formattedDate = new Date().toLocaleString();
+      await emailService.sendLoginNotification({
+        email: user.email,
+        name: user.name,
+        loginDate: formattedDate,
+        device,
+        browser,
+        ip,
+        location
+      });
+
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: days * 24 * 60 * 60 * 1000
+      });
+
+      const { password: _, ...userWithoutPassword } = user;
+
+      res.json({
+        user: userWithoutPassword,
+        accessToken,
+        refreshToken,
+        historyId
       });
     } catch (error) {
       next(error);

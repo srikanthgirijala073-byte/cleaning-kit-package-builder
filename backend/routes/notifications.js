@@ -32,4 +32,26 @@ router.get('/', authenticate, async (req, res) => {
   }
 });
 
+// PUT /api/notifications/:id/read
+router.put('/:id/read', authenticate, async (req, res) => {
+  try {
+    await query('UPDATE notifications SET is_read = TRUE WHERE notification_id = ?', [req.params.id]);
+    res.json({ message: 'Notification marked as read' });
+  } catch (error) {
+    console.error('Mark notification read error:', error);
+    res.status(500).json({ message: 'Failed to update notification' });
+  }
+});
+
+// DELETE /api/notifications/:id
+router.delete('/:id', authenticate, async (req, res) => {
+  try {
+    await query('DELETE FROM notifications WHERE notification_id = ?', [req.params.id]);
+    res.json({ message: 'Notification deleted' });
+  } catch (error) {
+    console.error('Delete notification error:', error);
+    res.status(500).json({ message: 'Failed to delete notification' });
+  }
+});
+
 module.exports = router;

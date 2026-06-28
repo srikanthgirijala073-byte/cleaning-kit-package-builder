@@ -98,11 +98,10 @@ export const SIDEBAR_MENU_ITEMS = [
   { path: "/delivery/dashboard",        icon: "\ud83d\ude9a", title: "Delivery Portal",   roles: ["delivery"] },
   { path: "/accounts/dashboard",        icon: "\ud83d\udcb0", title: "Accounts Portal",   roles: ["accounts"] },
   { path: "/compliance-admin/dashboard",icon: "\ud83d\udee1\ufe0f", title: "Compliance Portal", roles: ["compliance"] },
-  { path: "/reports", icon: "\ud83d\udcc8", title: "Reports", roles: ["manager", "admin"] },
-  { path: "/analytics", icon: "\ud83d\udcc9", title: "Analytics", roles: ["manager", "admin"] },
-  { path: "/notifications", icon: "\ud83d\udd14", title: "Notifications", roles: "*" },
-  { path: "/history", icon: "\ud83d\udcdd", title: "History", roles: ["manager", "admin"] },
-  { path: "/settings", icon: "\u2699\ufe0f", title: "Settings", roles: ["admin"] },
+  { path: "/reports", icon: "📊", title: "Reports", roles: ["manager", "admin"] },
+  { path: "/analytics", icon: "📈", title: "Analytics", roles: ["manager", "admin"] },
+  { path: "/history", icon: "📝", title: "History", roles: ["manager", "admin"] },
+  { path: "/settings", icon: "⚙️", title: "Settings", roles: ["admin"] },
 ];
 
 /**

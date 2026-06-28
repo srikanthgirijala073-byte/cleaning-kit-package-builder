@@ -191,7 +191,7 @@ function SecuritySettings() {
       link.click();
       document.body.removeChild(link);
     } catch (err) {
-      alert("Failed to download personal data.");
+      alert("Failed to download personal data: " + (err.response?.data?.message || err.message));
     } finally {
       setDownloadLoading(false);
     }

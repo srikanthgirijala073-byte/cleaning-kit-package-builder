@@ -16,34 +16,42 @@
    ROOT VARIABLES — Professional Figma-inspired palette
 ========================= */
 :root {
-  /* Brand colors */
-  --primary-color: #6366f1;
-  --primary-hover: #4f46e5;
-  --primary-light: #eef2ff;
-  --primary-glow: rgba(99, 102, 241, 0.25);
+  /* User Specified Base Colors */
+  --primary: #1E3A5F;
+  --accent: #F59E0B;
+  --success: #10B981;
+  --danger: #EF4444;
+  --bg: #F8FAFC;
+  --text: #1E293B;
+
+  /* Brand colors mapped for compatibility */
+  --primary-color: var(--primary);
+  --primary-hover: #172c47;
+  --primary-light: #e0f2fe;
+  --primary-glow: rgba(30, 58, 95, 0.25);
 
   /* Secondary & accent */
-  --accent-color: #06b6d4;
-  --accent-hover: #0891b2;
-  --accent-light: #ecfeff;
+  --accent-color: var(--accent);
+  --accent-hover: #d97706;
+  --accent-light: #fef3c7;
 
   /* Semantic colors */
   --secondary-color: #64748b;
-  --success-color: #10b981;
+  --success-color: var(--success);
   --success-light: #d1fae5;
-  --warning-color: #f59e0b;
+  --warning-color: var(--accent);
   --warning-light: #fef3c7;
-  --danger-color: #ef4444;
+  --danger-color: var(--danger);
   --danger-light: #fee2e2;
   --info-color: #3b82f6;
   --info-light: #dbeafe;
 
   /* Surface colors */
-  --bg-color: #f1f5f9;
-  --bg-secondary: #e8edf5;
+  --bg-color: var(--bg);
+  --bg-secondary: #f1f5f9;
   --card-bg: #ffffff;
   --card-bg-glass: rgba(255, 255, 255, 0.85);
-  --text-color: #0f172a;
+  --text-color: var(--text);
   --text-muted: #64748b;
   --text-light: #94a3b8;
   --border-color: #e2e8f0;
@@ -53,12 +61,12 @@
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
   --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(0, 0, 0, 0.06);
-  --shadow-primary: 0 8px 24px rgba(99, 102, 241, 0.2);
+  --shadow-primary: 0 8px 24px rgba(30, 58, 95, 0.2);
 
   /* Sidebar */
   --sidebar-bg: #0f172a;
   --sidebar-surface: #1e293b;
-  --sidebar-active: #6366f1;
+  --sidebar-active: var(--primary);
   --sidebar-text: #cbd5e1;
   --sidebar-text-muted: #64748b;
 
@@ -229,7 +237,7 @@ textarea::placeholder {
   to { opacity: 1; }
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 768px) {
   .main-wrapper {
     margin-left: 0;
     width: 100%;
@@ -475,6 +483,14 @@ tr:hover td {
 
   .page-title {
     font-size: 24px;
+  }
+
+  .inventory-table, .quotation-summary-section, .reports-results-section, .success-summary, .printable-invoice, .reports-page, .warehouse-management, .table-wrapper {
+    overflow-x: auto !important;
+  }
+
+  table {
+    min-width: 600px;
   }
 }
 

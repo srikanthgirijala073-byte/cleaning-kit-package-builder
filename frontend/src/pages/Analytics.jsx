@@ -53,8 +53,8 @@ function Analytics() {
       : "0.0";
 
   const statusMap = {};
-  if (Array.isArray(charts.ordersByStatus)) {
-    charts.ordersByStatus.forEach((row) => {
+  if (Array.isArray(charts.statusDistribution)) {
+    charts.statusDistribution.forEach((row) => {
       statusMap[row.status] = row.count;
     });
   }
@@ -124,7 +124,7 @@ function Analytics() {
       )}
 
       {/* Monthly Revenue (if available) */}
-      {Array.isArray(charts.monthlyRevenue) && charts.monthlyRevenue.length > 0 && (
+      {Array.isArray(charts.monthlyData) && charts.monthlyData.length > 0 && (
         <div style={sectionStyle}>
           <h2 style={sectionTitle}>Monthly Revenue</h2>
           <div style={{ overflowX: "auto" }}>
@@ -137,7 +137,7 @@ function Analytics() {
                 </tr>
               </thead>
               <tbody>
-                {charts.monthlyRevenue.map((row, i) => (
+                {charts.monthlyData.map((row, i) => (
                   <tr key={i} style={{ borderBottom: "1px solid var(--border)" }}>
                     <td style={td}>{row.month}</td>
                     <td style={td}>{row.orders || row.order_count || "—"}</td>

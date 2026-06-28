@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import { getProducts } from "../../services/api";
+import { getProducts, createQuotation } from "../../services/api";
+import { useAuth } from "../../context/AuthContext";
 import { FaBoxOpen, FaSearch, FaShoppingCart, FaTag, FaLayerGroup } from "react-icons/fa";
 import "./ProductCatalog.css";
 
@@ -16,6 +17,7 @@ function getTier(qty) {
 }
 
 function ProductCatalog() {
+  const { user } = useAuth();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -24,6 +26,12 @@ function ProductCatalog() {
   const [cart, setCart] = useState([]);
   const [showCart, setShowCart] = useState(false);
   const [quantities, setQuantities] = useState({});
+  const [toast, setToast] = useState(null);
+
+  const showToast = (message, type = "success") => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3500);
+  };
 
   useEffect(() => {
     (async () => {
@@ -67,11 +75,36 @@ function ProductCatalog() {
     return s + c.price * c.quantity * (1 - tier.discount / 100);
   }, 0);
 
-  const handleSubmitQuote = () => {
-    if (cart.length === 0) return alert("Cart is empty");
-    alert(`Quote request submitted for ${cart.length} product(s) — total ₹${Math.round(cartTotal).toLocaleString("en-IN")}\n\nA salesperson will contact you within 24 hours.`);
-    setCart([]);
-    setShowCart(false);
+  const handleSubmitQuote = async () => {
+    if (cart.length === 0) {
+      showToast("Your cart is empty. Add products first.", "error");
+      return;
+    }
+
+    try {
+      const payload = {
+        customer_name: user?.name || "Customer",
+        package_name: `Quote Request for ${cart.length} item(s)`,
+        facility_type: "b2b",
+        items: cart.map(item => ({
+          product_id: item.product_id,
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price
+        })),
+        total_amount: cartTotal,
+        notes: "Submitted via B2B Product Catalog"
+      };
+
+      await createQuotation(payload);
+
+      showToast(`Quote submitted for ${cart.length} product(s) — ₹${Math.round(cartTotal).toLocaleString("en-IN")}. A salesperson will contact you within 24 hours.`, "success");
+      setCart([]);
+      setShowCart(false);
+    } catch (err) {
+      console.error("Failed to submit quote:", err);
+      showToast("Failed to submit quote request. Please try again.", "error");
+    }
   };
 
   const updateCartQty = (id, qty) => {
@@ -80,6 +113,13 @@ function ProductCatalog() {
 
   return (
     <div className="catalog-page">
+      {/* Toast Notification */}
+      {toast && (
+        <div className={`catalog-toast catalog-toast--${toast.type}`}>
+          <span>{toast.type === "success" ? "✅" : "⚠️"}</span>
+          <span>{toast.message}</span>
+        </div>
+      )}
       <div className="catalog-header">
         <div>
           <h1><FaBoxOpen /> B2B Product Catalog</h1>

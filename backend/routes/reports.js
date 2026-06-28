@@ -30,7 +30,7 @@ router.get('/sales', authenticate, authorize('manager', 'admin'), async (req, re
     );
 
     const totalResult = await getOne(
-      `SELECT COUNT(*) as totalOrders, COALESCE(SUM(total_amount), 0) as totalSales 
+      `SELECT COUNT(*) as totalOrders, COALESCE(SUM(amount), 0) as totalSales 
        FROM orders WHERE status IN ('Delivered', 'Completed') ${dateFilter}`,
       params
     );
@@ -52,7 +52,7 @@ router.get('/revenue', authenticate, authorize('manager', 'admin'), async (req, 
     const monthlyRevenue = await query(`
       SELECT 
         DATE_FORMAT(created_at, '%Y-%m') as month,
-        COALESCE(SUM(total_amount), 0) as revenue,
+        COALESCE(SUM(amount), 0) as revenue,
         COUNT(*) as orders_count
       FROM orders 
       WHERE status IN ('Delivered', 'Completed')

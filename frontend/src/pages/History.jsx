@@ -32,15 +32,25 @@ function History() {
     fetchHistory();
   }, []);
 
-  const statuses = ["All", "placed", "processing", "packed", "shipped", "delivered", "cancelled"];
+  const statuses = ["All", "Pending", "Processing", "Shipped", "Delivered", "Completed", "Cancelled"];
 
   const filtered = orders.filter((o) => {
     const matchSearch =
       !search ||
       (o.customer_name || "").toLowerCase().includes(search.toLowerCase()) ||
       String(o.order_id).includes(search);
+
+    const orderStatus = (o.status || "").toLowerCase();
+    const targetStatus = selectedStatus.toLowerCase();
+
     const matchStatus =
-      selectedStatus === "All" || o.status === selectedStatus;
+      selectedStatus === "All" ||
+      orderStatus === targetStatus ||
+      (targetStatus === "pending" && orderStatus === "placed") ||
+      (targetStatus === "placed" && orderStatus === "pending") ||
+      (targetStatus === "delivered" && orderStatus === "completed") ||
+      (targetStatus === "completed" && orderStatus === "delivered");
+
     return matchSearch && matchStatus;
   });
 
@@ -62,8 +72,8 @@ function History() {
       <div className="history-controls" style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginBottom: "1.5rem", alignItems: "center" }}>
         <SearchBar
           placeholder="Search by customer name or order ID..."
-          value={search}
-          onChange={(val) => setSearch(typeof val === "string" ? val : val?.target?.value || "")}
+          searchTerm={search}
+          setSearchTerm={setSearch}
         />
         <select
           value={selectedStatus}

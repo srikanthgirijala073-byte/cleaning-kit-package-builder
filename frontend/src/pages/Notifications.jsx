@@ -32,6 +32,20 @@ function Notifications() {
 
       setNotifications(mapped);
       setFiltered(mapped);
+
+      // Auto-mark all unread notifications as read
+      const unread = mapped.filter(n => !n.isRead);
+      if (unread.length > 0) {
+        const user = JSON.parse(localStorage.getItem("user") || "{}");
+        for (const item of unread) {
+          axios.put(`${API_BASE_URL}/notifications/${item.id}/read`, {}, {
+            headers: { Authorization: `Bearer ${user.token}` }
+          }).catch(err => console.error("Auto mark read failed:", err));
+        }
+        // Locally set them all to read so they visually update immediately
+        setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+        setFiltered(prev => prev.map(n => ({ ...n, isRead: true })));
+      }
     } catch (error) {
       console.error("Error loading notifications:", error);
     } finally {

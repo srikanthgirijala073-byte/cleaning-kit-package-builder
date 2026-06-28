@@ -1,12 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
-import axios from "axios";
-import { API_BASE_URL } from "../services/api";
+import { sendPasswordResetEmail } from "firebase/auth";
+import { auth } from "../firebase";
 import "./Auth.css";
 
 function ForgotPassword() {
-  const { executeRecaptcha } = useGoogleReCaptcha();
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -18,22 +16,12 @@ function ForgotPassword() {
     setSuccess("");
     setLoading(true);
 
-    // Get reCAPTCHA token (invisible v3 - no user interaction)
-    let recaptchaToken = "";
-    if (executeRecaptcha) {
-      try {
-        recaptchaToken = await executeRecaptcha("forgot_password");
-      } catch (recaptchaErr) {
-        console.warn("reCAPTCHA execution failed (proceeding anyway):", recaptchaErr);
-      }
-    }
-
     try {
-      const response = await axios.post(`${API_BASE_URL}/auth/forgot-password`, { email, recaptchaToken });
-      setSuccess(response.data.message);
+      await sendPasswordResetEmail(auth, email);
+      setSuccess("Password reset email sent! Please check your inbox.");
       setEmail("");
     } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong. Please try again.");
+      setError(err.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }

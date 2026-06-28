@@ -19,6 +19,7 @@ const {
 const { logAuditEvent } = require('../utils/logger');
 const { authenticate } = require('../middleware/auth');
 const upload = require('../middleware/upload');
+const { parseUserAgent } = require('../utils/helpers');
 
 // =======================
 // Demo users fallback — used when MySQL DB is offline (e.g. on Render free tier without DB)
@@ -58,7 +59,7 @@ router.post('/register', async (req, res) => {
     // Create user (default role: customer)
     const result = await query(
       'INSERT INTO users (name, email, password, phone, address, role, email_verified) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [name, email, hashedPassword, phone || '', address || '', 'customer', false]
+      [name, email, hashedPassword, phone || '', address || '', 'customer', true]
     );
 
     const userId = result.insertId;
@@ -160,11 +161,15 @@ router.post('/login', async (req, res) => {
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
+    // Parse user agent to prevent database data truncation errors (ER_DATA_TOO_LONG)
+    const ua = req.headers['user-agent'] || 'Unknown';
+    const { browser, device } = parseUserAgent(ua);
+
     // Store refresh token (table is user_sessions per schema)
     const refreshExpires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     await query(
       'INSERT INTO user_sessions (user_id, refresh_token, device_name, browser, ip_address, expires_at) VALUES (?, ?, ?, ?, ?, ?)',
-      [user.user_id, refreshToken, req.headers['user-agent'] || 'Unknown', req.headers['user-agent'] || 'Unknown', req.ip || '127.0.0.1', refreshExpires]
+      [user.user_id, refreshToken, device, browser, req.ip || '127.0.0.1', refreshExpires]
     );
 
     // Record login history
@@ -173,8 +178,8 @@ router.post('/login', async (req, res) => {
       [
         user.user_id,
         req.ip || '127.0.0.1',
-        req.headers['user-agent'] || 'Unknown',
-        req.headers['user-agent'] || 'Unknown',
+        device,
+        browser,
       ]
     );
     const historyId = loginResult.insertId;
@@ -186,8 +191,8 @@ router.post('/login', async (req, res) => {
     if (user.login_notifications_enabled) {
       const loginInfo = {
         time: new Date().toLocaleString(),
-        device: req.headers['user-agent'] || 'Unknown Device',
-        browser: req.headers['user-agent'] || 'Unknown Browser',
+        device: device,
+        browser: browser,
         ip: req.ip || '127.0.0.1',
       };
       // Fire and forget - don't block login response
@@ -285,6 +290,56 @@ router.post('/quick-login', async (req, res) => {
   } catch (error) {
     console.error('Quick login error:', error);
     res.status(500).json({ message: 'Quick login failed' });
+  }
+});
+
+// =======================
+// POST /api/auth/refresh
+// =======================
+router.post('/refresh', async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) {
+      return res.status(400).json({ message: 'Refresh token is required' });
+    }
+
+    const decoded = verifyRefreshToken(refreshToken);
+    if (!decoded) {
+      return res.status(401).json({ message: 'Invalid or expired refresh token' });
+    }
+
+    let user = null;
+    try {
+      user = await getOne('SELECT * FROM users WHERE user_id = ?', [decoded.userId]);
+      if (!user) {
+        return res.status(401).json({ message: 'User not found' });
+      }
+
+      // Check if session exists in user_sessions and is not expired
+      const session = await getOne(
+        'SELECT * FROM user_sessions WHERE user_id = ? AND refresh_token = ? AND expires_at > NOW()',
+        [decoded.userId, refreshToken]
+      );
+      if (!session) {
+        return res.status(401).json({ message: 'Session expired or invalid' });
+      }
+    } catch (dbError) {
+      console.warn('Refresh token DB validation error, using demo fallback:', dbError.message);
+      // Fallback for demo users
+      user = Object.values(DEMO_USERS).find(u => u.user_id === decoded.userId);
+      if (!user) {
+        user = { user_id: decoded.userId, name: 'Demo User', role: 'customer', email: 'customer@example.com' };
+      }
+    }
+
+    const newAccessToken = generateAccessToken(user);
+    res.json({
+      accessToken: newAccessToken,
+      token: newAccessToken
+    });
+  } catch (error) {
+    console.error('Token refresh error:', error);
+    res.status(500).json({ message: 'Failed to refresh token' });
   }
 });
 

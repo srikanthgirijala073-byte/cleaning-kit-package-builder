@@ -75,3 +75,40 @@
   .catalog-header { flex-direction: column; gap: 12px; }
   .cart-panel { width: 100%; }
 }
+
+/* ── Toast Notification ─────────────────────── */
+.catalog-toast {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  z-index: 9999;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  max-width: 420px;
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.4;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14);
+  animation: catalogToastIn 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.catalog-toast--success {
+  background: #ecfdf5;
+  border: 1px solid #6ee7b7;
+  color: #065f46;
+}
+
+.catalog-toast--error {
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+}
+
+@keyframes catalogToastIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+

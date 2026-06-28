@@ -54,7 +54,7 @@ function ReorderDashboard() {
       await approveReorder(id);
       fetchAll();
     } catch (err) {
-      alert("Failed to approve reorder.");
+      alert("Failed to approve reorder: " + (err.response?.data?.message || err.message));
     }
   };
 
@@ -64,7 +64,7 @@ function ReorderDashboard() {
       fetchAll();
       setActiveTab("reorders");
     } catch (err) {
-      alert("Failed to create reorder from suggestion.");
+      alert("Failed to create reorder from suggestion: " + (err.response?.data?.message || err.message));
     }
   };
 

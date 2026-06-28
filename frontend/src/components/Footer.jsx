@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import "./Footer.css";
 
 function Footer() {
@@ -8,7 +9,7 @@ function Footer() {
 
         {/* Company Section */}
         <div className="footer-section">
-          <h2>🧹 Cleaning Kit Builder</h2>
+          <h2>🧹 Ganga Maxx</h2>
 
           <p>
             Smart B2B cleaning supply management platform
@@ -21,11 +22,11 @@ function Footer() {
           <h3>Quick Links</h3>
 
           <ul>
-            <li>Home</li>
-            <li>Dashboard</li>
-            <li>Kit Builder</li>
-            <li>Products</li>
-            <li>Orders</li>
+            <li><Link to="/">Home</Link></li>
+            <li><Link to="/dashboard">Dashboard</Link></li>
+            <li><Link to="/kit-builder">Kit Builder</Link></li>
+            <li><Link to="/products">Products</Link></li>
+            <li><Link to="/orders">Orders</Link></li>
           </ul>
         </div>
 
@@ -34,11 +35,11 @@ function Footer() {
           <h3>Services</h3>
 
           <ul>
-            <li>Cleaning Kits</li>
-            <li>Inventory Management</li>
-            <li>Order Tracking</li>
-            <li>Reports</li>
-            <li>Analytics</li>
+            <li><Link to="/kit-builder">Cleaning Kits</Link></li>
+            <li><Link to="/inventory">Inventory Management</Link></li>
+            <li><Link to="/b2b/delivery-tracker">Order Tracking</Link></li>
+            <li><Link to="/reports">Reports</Link></li>
+            <li><Link to="/analytics">Analytics</Link></li>
           </ul>
         </div>
 

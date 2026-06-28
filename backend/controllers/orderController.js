@@ -46,6 +46,26 @@ const orderController = {
       const order = await Order.findById(orderId);
       const orderItems = await OrderItem.findByOrderId(orderId);
 
+      // Notify all administrative users (admin, manager, staff)
+      try {
+        const [usersToNotify] = await require('../config/db').execute(
+          "SELECT user_id FROM users WHERE role IN ('admin', 'manager', 'staff')"
+        );
+        for (const u of usersToNotify) {
+          await require('../config/db').execute(
+            "INSERT INTO notifications (user_id, title, message, type) VALUES (?, ?, ?, ?)",
+            [
+              u.user_id,
+              "New Order Placed",
+              `A new order of ${quantity || 1} item(s) (Total: ₹${amount}) has been placed by ${customer_name} for "${package_name || 'Custom Package'}".`,
+              "info"
+            ]
+          );
+        }
+      } catch (notifErr) {
+        console.error("Failed to create admin notification:", notifErr);
+      }
+
       res.status(201).json({ message: 'Order created successfully', order, items: orderItems });
     } catch (error) {
       next(error);

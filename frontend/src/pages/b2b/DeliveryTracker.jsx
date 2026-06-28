@@ -42,7 +42,7 @@ function DeliveryTracker() {
 
   const handleStatusChange = async (id, newStatus) => {
     try { await updateDeliveryStatus(id, newStatus); fetchDeliveries(); }
-    catch (err) { alert("Failed to update status."); }
+    catch (err) { alert("Failed to update status: " + (err.response?.data?.message || err.message)); }
   };
 
   const handleEdit = (d) => {

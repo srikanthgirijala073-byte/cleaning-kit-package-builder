@@ -21,6 +21,7 @@ router.post('/login', loginLimiter, verifyRecaptcha, authController.login);
 router.post('/logout', authController.logout);
 router.post('/refresh', moderateLimiter, authController.refreshToken);
 router.post('/quick-login', moderateLimiter, authController.quickMockLogin);
+router.post('/firebase-login', moderateLimiter, authController.firebaseLogin);
 
 // 2. Google OAuth 2.0 routes
 router.get('/google', (req, res, next) => {

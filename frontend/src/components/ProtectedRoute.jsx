@@ -17,7 +17,7 @@ function ProtectedRoute({ children, requireVerified = true }) {
   // Check email verification if required
   // Users authenticated via Google are considered verified
   if (requireVerified && user && !user.isFirebaseAuth) {
-    if (user.email_verified === false) {
+    if (!user.email_verified) {
       return (
         <Navigate
           to="/login?verified=required"

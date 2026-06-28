@@ -135,10 +135,10 @@ CREATE TABLE IF NOT EXISTS products (
   name VARCHAR(255) NOT NULL,
   description TEXT,
   price DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-  stock_quantity INT DEFAULT 0,
+  stock INT DEFAULT 0,
   min_stock_level INT DEFAULT 5,
   category VARCHAR(100) DEFAULT '',
-  image_url VARCHAR(500) DEFAULT '',
+  image VARCHAR(500) DEFAULT '',
   is_active BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -206,11 +206,15 @@ CREATE TABLE IF NOT EXISTS order_items (
 -- INVENTORY
 -- =======================
 CREATE TABLE IF NOT EXISTS inventory (
-  id INT AUTO_INCREMENT PRIMARY KEY,
+  inventory_id INT AUTO_INCREMENT PRIMARY KEY,
   product_id INT NOT NULL,
-  quantity_change INT NOT NULL,
-  reason VARCHAR(255) DEFAULT '',
+  name VARCHAR(255) NOT NULL,
+  category VARCHAR(100) DEFAULT '',
+  current_stock INT DEFAULT 0,
+  minimum_stock INT DEFAULT 5,
+  status VARCHAR(50) DEFAULT 'In Stock',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -457,7 +461,7 @@ CREATE TABLE IF NOT EXISTS saved_kits (
 -- =======================
 -- SEED: Sample Products
 -- =======================
-INSERT INTO products (name, description, price, stock_quantity, min_stock_level, category, is_active)
+INSERT INTO products (name, description, price, stock, min_stock_level, category, is_active)
 VALUES
   ('Disinfectant Spray 500ml', 'Multi-surface disinfectant spray kills 99.9% germs', 250.00, 100, 10, 'Disinfectants', TRUE),
   ('Floor Cleaner 1L', 'Concentrated floor cleaner for all floor types', 180.00, 80, 10, 'Floor Care', TRUE),

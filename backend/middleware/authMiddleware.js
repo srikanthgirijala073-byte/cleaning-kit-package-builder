@@ -28,19 +28,29 @@ const authMiddleware = async (req, res, next) => {
       return res.status(401).json({ message: 'Access denied. Invalid authentication token.' });
     }
 
-    const userId = decoded.id;
+    // Support both {id} (authController) and {userId} (tokens.js) payload shapes
+    const userId = decoded.id || decoded.userId;
     if (!userId) {
       return res.status(401).json({ message: 'Access denied. Invalid token payload.' });
     }
 
+    // Try DB lookup but gracefully fall back to token payload if DB unavailable
     let user;
     try {
       user = await User.findById(userId);
     } catch (dbErr) {
-      return res.status(500).json({ message: 'Server error while authenticating.' });
+      console.warn('authMiddleware: DB lookup failed, using token payload:', dbErr.message);
+      // Fallback: construct a minimal user object from decoded token
+      user = {
+        user_id: userId,
+        email: decoded.email,
+        role: decoded.role,
+        name: decoded.name || decoded.email,
+      };
     }
 
     if (!user) {
+      // User deleted after token was issued — treat as unauthorized
       return res.status(401).json({ message: 'Access denied. User not found.' });
     }
 

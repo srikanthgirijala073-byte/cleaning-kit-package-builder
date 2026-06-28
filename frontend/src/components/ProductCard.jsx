@@ -12,27 +12,35 @@ function ProductCard({
   isFavorite = false,
   onToggleFavorite,
   onQuickView,
+  quantity,
+  onIncrease,
+  onDecrease,
 }) {
   return (
     <div className="product-card">
       {/* Product Image Wrapper */}
       <div className="product-image" onClick={onQuickView} style={{ cursor: "pointer" }}>
+        {quantity === 0 && (
+          <span className="not-included-badge">Not included</span>
+        )}
         <img
           src={image}
           alt={name}
         />
         {/* Heart icon overlay */}
-        <button 
-          className="wishlist-btn" 
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleFavorite();
-          }}
-          type="button"
-          aria-label={isFavorite ? "Remove from wishlist" : "Add to wishlist"}
-        >
-          {isFavorite ? <FaHeart className="heart-filled" /> : <FaRegHeart className="heart-outline" />}
-        </button>
+        {onToggleFavorite && (
+          <button 
+            className="wishlist-btn" 
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleFavorite();
+            }}
+            type="button"
+            aria-label={isFavorite ? "Remove from wishlist" : "Add to wishlist"}
+          >
+            {isFavorite ? <FaHeart className="heart-filled" /> : <FaRegHeart className="heart-outline" />}
+          </button>
+        )}
 
         {/* Hover Quick View Overlay */}
         <div className="image-overlay">
@@ -60,16 +68,39 @@ function ProductCard({
           ⭐ {rating || 4.5}
         </div>
 
-        <button
-          className="add-btn"
-          onClick={(e) => {
-            e.stopPropagation();
-            addToCart();
-          }}
-          type="button"
-        >
-          Add to Package
-        </button>
+        {addToCart ? (
+          <button
+            className="add-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              addToCart();
+            }}
+            type="button"
+          >
+            Add to Package
+          </button>
+        ) : (
+          <div className="product-qty-editor">
+            <button 
+              className="qty-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDecrease();
+              }}
+              type="button"
+            >-</button>
+            <span className="qty-val">{quantity}</span>
+            <button 
+              className="qty-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                onIncrease();
+              }}
+              type="button"
+            >+</button>
+            <div className="line-total">Total: ₹{price * quantity}</div>
+          </div>
+        )}
       </div>
     </div>
   );

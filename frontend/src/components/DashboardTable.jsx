@@ -6,10 +6,6 @@ function DashboardTable({ orders }) {
   return (
     <div className="dashboard-table-container">
 
-      <div className="table-header">
-        <h2>Recent Orders</h2>
-      </div>
-
       <table className="dashboard-table">
 
         <thead>

@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { signInWithPopup } from "firebase/auth";
+import { signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 import axios from "axios";
 import {
   loginUser,
@@ -27,6 +27,14 @@ export const AuthProvider = ({ children }) => {
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
+        // Validate the stored session has a valid token (not a stale/broken token from before JWT fix)
+        const token = parsed.accessToken || parsed.token;
+        if (!token || token === 'dummy-token') {
+          // Clear stale/invalid session
+          localStorage.removeItem("user");
+          setLoading(false);
+          return;
+        }
         if (parsed.user) {
           setUser(parsed.user);
         } else if (parsed.token) {
@@ -46,6 +54,33 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password, remember = false, recaptchaToken = "") => {
     try {
       setRememberMe(remember);
+
+      // 1. Try Firebase Email/Password Sign-In
+      let firebaseUser = null;
+      try {
+        const firebaseResult = await signInWithEmailAndPassword(auth, email, password);
+        firebaseUser = firebaseResult.user;
+      } catch (fbErr) {
+        console.warn("Firebase login failed, trying MySQL fallback:", fbErr.message);
+      }
+
+      if (firebaseUser) {
+        const response = await axios.post(`${API_BASE_URL}/auth/firebase-login`, {
+          email: firebaseUser.email,
+          name: firebaseUser.displayName,
+          uid: firebaseUser.uid,
+        });
+        const data = response.data;
+        setUser(data.user);
+        localStorage.setItem("user", JSON.stringify(data));
+        return {
+          success: true,
+          message: "Login successful!",
+          user: data.user
+        };
+      }
+
+      // 2. Fallback to traditional MySQL login
       const response = await loginUser({
         email,
         password,
@@ -69,6 +104,13 @@ export const AuthProvider = ({ children }) => {
       // Successful login without 2FA
       setUser(data.user);
       localStorage.setItem("user", JSON.stringify(data));
+
+      // Attempt to migrate this user to Firebase in the background
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+      } catch (migrateErr) {
+        // Ignore if already exists
+      }
 
       return {
         success: true,
@@ -97,30 +139,25 @@ export const AuthProvider = ({ children }) => {
       const result = await signInWithPopup(auth, provider);
       const firebaseUser = result.user;
 
-      const firebaseSessionUser = {
-        name: firebaseUser.displayName || firebaseUser.email || "Google User",
+      const response = await axios.post(`${API_BASE_URL}/auth/firebase-login`, {
         email: firebaseUser.email,
-        profile_image: firebaseUser.photoURL || "",
+        name: firebaseUser.displayName,
+        profileImage: firebaseUser.photoURL,
         uid: firebaseUser.uid,
-        isFirebaseAuth: true,
-      };
+      });
 
-      setUser(firebaseSessionUser);
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          user: firebaseSessionUser,
-          isFirebaseAuth: true,
-        })
-      );
+      const data = response.data;
+
+      setUser(data.user);
+      localStorage.setItem("user", JSON.stringify(data));
 
       return {
         success: true,
         message: "Logged in with Google successfully.",
-        user: firebaseSessionUser,
+        user: data.user,
       };
     } catch (error) {
-      const errorMessage = error.message || "Google sign-in failed.";
+      const errorMessage = error.response?.data?.message || error.message || "Google sign-in failed.";
       return {
         success: false,
         message: errorMessage,
@@ -183,6 +220,14 @@ export const AuthProvider = ({ children }) => {
   // ======================
   const register = async (name, email, password, phone = "", address = "", recaptchaToken = "") => {
     try {
+      // 1. Create in Firebase
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+      } catch (fbErr) {
+        console.warn("Firebase registration skipped/failed:", fbErr.message);
+      }
+
+      // 2. Create in MySQL
       const response = await registerUser({
         name,
         email,

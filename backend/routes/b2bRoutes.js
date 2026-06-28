@@ -26,10 +26,41 @@ router.post('/quotations', protect, async (req, res) => {
   try {
     const { customer_name, customer_id, package_name, facility_type, items, total_amount, valid_until, notes } = req.body;
     if (!customer_name) return res.status(400).json({ message: 'customer_name is required' });
+
+    // Resolve customer_id from user's email if not provided or to ensure it is valid
+    let resolvedCustomerId = customer_id || null;
+    if (req.user?.email) {
+      const [custRows] = await pool.query('SELECT customer_id FROM customers WHERE email = ?', [req.user.email]);
+      if (custRows[0]) {
+        resolvedCustomerId = custRows[0].customer_id;
+      } else {
+        resolvedCustomerId = null; // Prevent foreign key constraint failure for non-customer users (admin/staff)
+      }
+    }
+
     const [result] = await pool.query(
       'INSERT INTO quotations (customer_name,customer_id,package_name,facility_type,items,total_amount,valid_until,notes,created_by) VALUES (?,?,?,?,?,?,?,?,?)',
-      [customer_name, customer_id || null, package_name || '', facility_type || '', JSON.stringify(items || []), total_amount || 0, valid_until || null, notes || '', req.user?.user_id || null]
+      [customer_name, resolvedCustomerId, package_name || '', facility_type || '', JSON.stringify(items || []), total_amount || 0, valid_until || null, notes || '', req.user?.user_id || null]
     );
+
+    // Find all admin, manager, and staff users to notify them
+    try {
+      const [staffUsers] = await pool.query("SELECT user_id FROM users WHERE role IN ('admin', 'manager', 'staff')");
+      for (const u of staffUsers) {
+        await pool.query(
+          "INSERT INTO notifications (user_id, title, message, type) VALUES (?, ?, ?, ?)",
+          [
+            u.user_id,
+            "New Quote Request",
+            `Customer ${customer_name} has requested a quote for "${package_name || 'Custom Package'}" (Total: ₹${Math.round(total_amount)}).`,
+            "info"
+          ]
+        );
+      }
+    } catch (notifErr) {
+      console.error("Failed to create quote notifications:", notifErr.message);
+    }
+
     const [created] = await pool.query('SELECT * FROM quotations WHERE id=?', [result.insertId]);
     res.status(201).json(created[0]);
   } catch (e) { res.status(500).json({ message: e.message }); }
@@ -60,7 +91,7 @@ router.post('/quotations/:id/convert', protect, async (req, res) => {
     if (!rows[0]) return res.status(404).json({ message: 'Quotation not found' });
     const q = rows[0];
     const [orderResult] = await pool.query(
-      'INSERT INTO orders (customer_id, status, total_amount, notes) VALUES (?,?,?,?)',
+      'INSERT INTO orders (customer_id, status, amount, notes) VALUES (?,?,?,?)',
       [q.customer_id || null, 'placed', q.total_amount, `Converted from Quotation #${q.id} - ${q.package_name}`]
     );
     await pool.query("UPDATE quotations SET status='Converted' WHERE id=?", [q.id]);
@@ -170,7 +201,7 @@ router.get('/reorders', protect, async (req, res) => {
 router.get('/reorders/suggestions', protect, async (req, res) => {
   try {
     const [rows] = await pool.query(
-      'SELECT p.product_id, p.name as product_name, p.stock_quantity as current_stock, p.min_stock_level FROM products p WHERE p.stock_quantity <= p.min_stock_level AND p.is_active = 1'
+      'SELECT p.product_id, p.name as product_name, p.stock as current_stock, p.min_stock_level FROM products p WHERE p.stock <= p.min_stock_level AND p.is_active = 1'
     );
     const suggestions = rows.map(r => ({
       product_id: r.product_id,
