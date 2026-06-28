@@ -23,3 +23,13 @@ Thumbs.db
 # Uploads (user-generated content)
 backend/uploads/*
 !backend/uploads/.gitkeep
+
+# Playwright reports and test results
+playwright-report/
+**/playwright-report/
+test-results/
+**/test-results/
+
+# Temporary scratch folder
+scratch/
+**/scratch/

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Dynamically read backend URL from environment variables, fallback to Render production URL
-export const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://cleaning-kit-package-builder.onrender.com";
+export const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://cleaning-kit-backend.onrender.com";
 export const API_BASE_URL = `${BACKEND_URL}/api`;
 
 const API = axios.create({
