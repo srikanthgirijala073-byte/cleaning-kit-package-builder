@@ -479,6 +479,26 @@ function Login() {
               </button>
             </form>
 
+            <div className="auth-divider">or</div>
+
+            <div className="social-stack">
+              {/* Google Button */}
+              <button 
+                className="social-btn google-btn-oauth" 
+                onClick={() => handleProviderLogin('google')}
+                disabled={loading}
+                type="button"
+              >
+                <svg viewBox="0 0 24 24" width="20" height="20" className="social-icon">
+                  <path d="M21.35,11.1H12v2.7h5.38c-0.24,1.28 -0.96,2.37 -2.04,3.1v2.6h3.29c1.92,-1.77 3.02,-4.38 3.02,-7.4C21.65,11.75 21.55,11.4 21.35,11.1z" fill="#4285F4" />
+                  <path d="M12,20.5c2.43,0 4.47,-0.8 5.96,-2.2l-3.29,-2.6c-0.9,0.6 -2.07,0.97 -3.67,0.97 -2.83,0 -5.23,-1.91 -6.08,-4.48H1.53v2.7C3.02,17.92 7.18,20.5 12,20.5z" fill="#34A853" />
+                  <path d="M5.92,12.19c-0.22,-0.66 -0.35,-1.37 -0.35,-2.09s0.13,-1.43 0.35,-2.09V5.31H1.53c-0.78,1.57 -1.23,3.34 -1.23,5.19s0.45,3.62 1.23,5.19L5.92,12.19z" fill="#FBBC05" />
+                  <path d="M12,5.23c1.32,0 2.5,0.45 3.44,1.35l2.58,-2.58C16.46,2.51 14.43,2 12,2C7.18,2 3.02,4.58 1.53,7.61l4.39,3.38C6.77,8.42 9.17,6.23 12,5.23z" fill="#EA4335" />
+                </svg>
+                Continue with Google
+              </button>
+            </div>
+
             {/* Customer Sign-Up CTA */}
             <div className="customer-signup-box">
               <div className="customer-signup-text">

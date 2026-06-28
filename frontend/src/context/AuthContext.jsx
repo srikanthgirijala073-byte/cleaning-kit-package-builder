@@ -157,6 +157,12 @@ export const AuthProvider = ({ children }) => {
         user: data.user,
       };
     } catch (error) {
+      console.error("Google Sign-In Error Details:", {
+        code: error.code,
+        message: error.message,
+        response: error.response?.data,
+        error
+      });
       const errorMessage = error.response?.data?.message || error.message || "Google sign-in failed.";
       return {
         success: false,
@@ -242,6 +248,12 @@ export const AuthProvider = ({ children }) => {
         message: response.data?.message || "Registration successful! Please check your email to verify your account."
       };
     } catch (error) {
+      console.error("Registration Error Details:", {
+        code: error.code,
+        message: error.message,
+        response: error.response?.data,
+        error
+      });
       return {
         success: false,
         message: error.response?.data?.message || "Registration failed",
