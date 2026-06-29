@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { BACKEND_URL } from "../services/api";
+import GoogleChooserModal from "../components/GoogleChooserModal";
 import "./Welcome.css";
 
 function Welcome() {
   const { isAuthenticated, loading, loginWithFirebaseGoogle } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     if (!loading && isAuthenticated) {
@@ -42,29 +45,15 @@ function Welcome() {
     };
   }, []);
 
-  const handleProviderLogin = async (provider) => {
-    if (provider === "google") {
-      setError("");
-      try {
-        const result = await loginWithFirebaseGoogle();
-        if (result.success) {
-          navigate("/dashboard");
-        } else {
-          setError(result.message || "Google authentication failed.");
-        }
-      } catch (err) {
-        setError("Google authentication failed.");
-      }
-      return;
-    }
-
+  const handleProviderLogin = (provider) => {
+    setError("");
     const width = 500;
     const height = 650;
     const left = window.screen.width / 2 - width / 2;
     const top = window.screen.height / 2 - height / 2;
     
     window.open(
-      `/auth/${provider}/select`,
+      `${BACKEND_URL}/api/auth/${provider}`,
       "oauth-popup",
       `width=${width},height=${height},top=${top},left=${left},status=no,resizable=yes,scrollbars=yes`
     );
@@ -133,6 +122,11 @@ function Welcome() {
           By signing up, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
         </p>
       </div>
+      {searchParams.get("chooser") === "true" && (
+        <GoogleChooserModal
+          onClose={() => setSearchParams({})}
+        />
+      )}
     </div>
   );
 }

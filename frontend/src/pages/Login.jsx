@@ -3,7 +3,8 @@ import { Link, useNavigate, useSearchParams, useLocation } from "react-router-do
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { useAuth } from "../context/AuthContext";
 import OtpModal from "../components/OtpModal";
-import { getUserProfile } from "../services/api";
+import GoogleChooserModal from "../components/GoogleChooserModal";
+import { getUserProfile, BACKEND_URL } from "../services/api";
 import "./Auth.css";
 
 // Hardcoded role credentials — email/password → role assignment
@@ -18,7 +19,7 @@ function Login() {
   const { login, loginWithFirebaseGoogle, otpRequired, setOtpRequired, isAuthenticated, loading: authLoading, setUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -238,30 +239,15 @@ function Login() {
     }
   };
 
-  const handleProviderLogin = async (provider) => {
-    if (provider === "google") {
-      setError("");
-      setLoading(true);
-
-      const result = await loginWithFirebaseGoogle();
-      setLoading(false);
-
-      if (result.success) {
-        const from = location.state?.from?.pathname || "/dashboard";
-        navigate(from, { replace: true });
-      } else {
-        setError(result.message || "Google authentication failed.");
-      }
-      return;
-    }
-
+  const handleProviderLogin = (provider) => {
+    setError("");
     const width = 500;
     const height = 650;
     const left = window.screen.width / 2 - width / 2;
     const top = window.screen.height / 2 - height / 2;
     
     window.open(
-      `/auth/${provider}/select`,
+      `${BACKEND_URL}/api/auth/${provider}`,
       "oauth-popup",
       `width=${width},height=${height},top=${top},left=${left},status=no,resizable=yes,scrollbars=yes`
     );
@@ -524,6 +510,12 @@ function Login() {
         <OtpModal
           onClose={() => setOtpRequired(false)}
           onSuccess={handleOtpSuccess}
+        />
+      )}
+
+      {searchParams.get("chooser") === "true" && (
+        <GoogleChooserModal
+          onClose={() => setSearchParams({})}
         />
       )}
     </div>
