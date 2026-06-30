@@ -100,6 +100,18 @@ function Login() {
     const historyId = searchParams.get("historyId");
 
     if (token && refreshToken) {
+      // If this is a popup window (opened by the main login page),
+      // send the auth tokens to the parent window via postMessage and close.
+      if (window.opener && window.opener !== window) {
+        window.opener.postMessage({
+          type: "OAUTH_SUCCESS",
+          token,
+          refreshToken,
+          historyId
+        }, window.location.origin);
+        window.close();
+        return;
+      }
       initializeOAuthSession(token, refreshToken, historyId);
     }
   }, [searchParams]);
